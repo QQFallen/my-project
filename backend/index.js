@@ -53,11 +53,11 @@ app.get('/users', async (req, res) => {
 // Создание мероприятия
 app.post('/events', async (req, res) => {
   try {
-    const { title, description, date, createdBy } = req.body;
-    if (!title || !date || !createdBy) {
-      return res.status(400).json({ error: 'Title, date, and createdBy are required.' });
+    const { title, description, date, createdBy, location } = req.body;
+    if (!title || !date || !createdBy || !location) {
+      return res.status(400).json({ error: 'Title, date, createdBy, and location are required.' });
     }
-    const event = await Event.create({ title, description, date, createdBy });
+    const event = await Event.create({ title, description, date, createdBy, location });
     res.status(201).json(event);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -90,21 +90,20 @@ app.get('/events/:id', async (req, res) => {
 // Обновление мероприятия
 app.put('/events/:id', async (req, res) => {
   try {
-    const { title, description, date, createdBy } = req.body;
+    const { title, description, date, createdBy, location } = req.body;
     const event = await Event.findByPk(req.params.id);
     if (!event) {
       return res.status(404).json({ error: 'Event not found.' });
     }
-    if (!title || !date || !createdBy) {
-      return res.status(400).json({ error: 'Title, date, and createdBy are required.' });
+    if (!title || !date || !createdBy || !location) {
+      return res.status(400).json({ error: 'Title, date, createdBy, and location are required.' });
     }
-    await event.update({ title, description, date, createdBy });
+    await event.update({ title, description, date, createdBy, location });
     res.json(event);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
-
 // Удаление мероприятия
 app.delete('/events/:id', async (req, res) => {
   try {

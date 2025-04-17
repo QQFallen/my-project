@@ -28,6 +28,10 @@ Event.init({
       key: 'id',
     },
   },
+  location: {
+    type: DataTypes.STRING,
+    allowNull: false, // Поле обязательно
+  },
 }, {
   sequelize,
   modelName: 'Event',
@@ -40,4 +44,4 @@ const syncEventModel = async () => {
 
 syncEventModel();
 
-module.exports = Event; 
+module.exports = Event;
