@@ -9,17 +9,17 @@ dotenv.config();
 // Создание приложения Express
 const app = express();
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+// Настройка middleware
+app.use(cors()); // Разрешение кросс-доменных запросов
+app.use(express.json()); // Обработка входящих JSON-запросов
+
+// Определение порта
+const PORT = process.env.PORT || 5000;
 
 // Тестовый маршрут
 app.get('/', (req, res) => {
-  res.send('Сервер работает!');
+  res.json({ message: 'Сервер работает!' }); // Возвращаем простой JSON-ответ
 });
-
-// Порт сервера
-const PORT = process.env.PORT || 5000;
 
 // Запуск сервера
 app.listen(PORT, () => {
