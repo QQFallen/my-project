@@ -26,6 +26,13 @@ app.post('/users', async (req, res) => {
     if (!name || !email) {
       return res.status(400).json({ error: 'Name and email are required.' });
     }
+
+    // Проверка уникальности email
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ error: 'Email already exists.' });
+    }
+
     const user = await User.create({ name, email });
     res.status(201).json(user);
   } catch (error) {
@@ -117,4 +124,3 @@ app.delete('/events/:id', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Сервер запущен на порту ${PORT}`);
 });
-///ffas
