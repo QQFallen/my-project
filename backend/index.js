@@ -2,6 +2,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const { sequelize } = require('./config/db'); // Импортируем sequelize
 
 // Загрузка переменных окружения
 dotenv.config();
@@ -21,7 +22,18 @@ app.get('/', (req, res) => {
   res.json({ message: 'Сервер работает!' }); // Возвращаем простой JSON-ответ
 });
 
+// Проверка соединения с базой данных
+const testDatabaseConnection = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('Соединение с базой данных успешно установлено.');
+  } catch (error) {
+    console.error('Не удалось подключиться к базе данных:', error);
+  }
+};
+
 // Запуск сервера
 app.listen(PORT, () => {
   console.log(`Сервер запущен на порту ${PORT}`);
+  testDatabaseConnection(); // Проверяем соединение при запуске сервера
 });
