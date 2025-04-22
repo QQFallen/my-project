@@ -19,7 +19,40 @@ const app = express();
 // Настройка middleware
 app.use(cors()); // Разрешение кросс-доменных запросов
 app.use(express.json()); // Обработка входящих JSON-запросов
-app.use(morgan('dev')); // Логирование запросов
+
+// Настройка логирования
+morgan.token('date', () => {
+  return new Date().toISOString();
+});
+
+morgan.token('body', (req) => {
+  return JSON.stringify(req.body);
+});
+
+// Кастомный формат для логирования
+const logFormat = ':date[iso] :method :url :status :response-time ms - :res[content-length] - :body';
+
+// Используем morgan с кастомным форматом
+app.use(morgan(logFormat, {
+  skip: (req, res) => res.statusCode >= 400, // Пропускаем ошибки, они будут логироваться отдельно
+  stream: {
+    write: (message) => {
+      console.log('\x1b[32m%s\x1b[0m', message.trim()); // Зеленый цвет для успешных запросов
+    }
+  }
+}));
+
+// Логирование ошибок
+app.use(morgan(logFormat, {
+  skip: (req, res) => res.statusCode < 400, // Логируем только ошибки
+  stream: {
+    write: (message) => {
+      console.log('\x1b[31m%s\x1b[0m', message.trim()); // Красный цвет для ошибок
+    }
+  }
+}));
+
+// Swagger документация
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 
 // Определение порта
