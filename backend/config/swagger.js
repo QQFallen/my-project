@@ -54,7 +54,10 @@ const options = {
       }
     }
   },
-  apis: [path.join(__dirname, '../index.js')], // Используем абсолютный путь
+  apis: [
+    path.join(__dirname, '../routes/*.js'), // Ищем документацию во всех файлах в папке routes
+    path.join(__dirname, '../index.js') // И в основном файле
+  ],
 };
 
 const specs = swaggerJsdoc(options);
