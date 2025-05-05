@@ -4,6 +4,17 @@ const User = require('../models/User');
 const { ValidationError, NotFoundError } = require('../errors');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const passport = require('../config/passport');
+
+// Middleware для проверки роли
+function requireRole(role) {
+  return (req, res, next) => {
+    if (!req.user || req.user.role !== role) {
+      return res.status(403).json({ message: 'Доступ запрещён: недостаточно прав' });
+    }
+    next();
+  };
+}
 
 router.post('/', async (req, res, next) => {
   try {
@@ -35,17 +46,27 @@ router.post('/', async (req, res, next) => {
  *   get:
  *     summary: Get all users
  *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: List of users
+ *       401:
+ *         description: Не авторизован
+ *       403:
+ *         description: Доступ запрещен
  */
-router.get('/', async (req, res, next) => {
-  try {
-    const users = await User.findAll();
-    res.json(users);
-  } catch (error) {
-    next(error);
+router.get('/', 
+  passport.authenticate('jwt', { session: false }),
+  requireRole('admin'),
+  async (req, res, next) => {
+    try {
+      const users = await User.findAll();
+      res.json(users);
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 module.exports = router; 
