@@ -1,10 +1,6 @@
+cначала все коммиты и пуши в develop
 git add .
 git commit -m "..."
 git push origin develop
 
-git checkout main
-git pull origin main
-git merge develop
-//Конфликты -> git add <имя_файла> # для каждого файла с конфликтами
-git commit -m "Merge branch 'develop' into main"
-git push origin main
+потом мерж рыгвест в мейн
