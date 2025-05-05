@@ -86,13 +86,24 @@ const options = {
               type: 'string'
             }
           }
+        },
+        EventCreateRequest: {
+          type: 'object',
+          required: ['title', 'date', 'location'],
+          properties: {
+            title: { type: 'string', description: 'Название события' },
+            date: { type: 'string', format: 'date-time', description: 'Дата и время' },
+            location: { type: 'string', description: 'Место проведения' }
+          }
         }
       }
     }
   },
   apis: [
-    path.join(__dirname, '../routes/*.js'), // Ищем документацию во всех файлах в папке routes
-    path.join(__dirname, '../index.js') // И в основном файле
+    path.join(__dirname, '../routes/*.js'),
+    path.join(__dirname, '../routes/public.js'),
+    path.join(__dirname, '../routes/protected.js'),
+    path.join(__dirname, '../index.js')
   ],
 };
 

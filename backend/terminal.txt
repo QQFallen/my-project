@@ -1,8 +1,6 @@
-curl -X POST http://localhost:5000/users -H "Content-Type: application/json" -d '{"name": "John Doe", "email": "john@example.com"}'
-curl -X GET http://localhost:5000/users
-curl -X POST http://localhost:5000/events -H "Content-Type: application/json" -d '{"title": "Концерт", "description": "Концерт классической музыки", "date": "2023-12-01", "createdBy": 1}'
-curl -X GET http://localhost:5000/events
-
+git add .
+git commit -m "..."
+git push origin develop
 
 git checkout main
 git pull origin main
@@ -10,15 +8,3 @@ git merge develop
 //Конфликты -> git add <имя_файла> # для каждого файла с конфликтами
 git commit -m "Merge branch 'develop' into main"
 git push origin main
-
-curl -X POST http://localhost:5000/events -H "Content-Type: application/json" -d "{\"title\": \"Концерт\", \"description\": \"Концерт классической музыки\", \"date\": \"2023-12-01\", \"createdBy\": 1}"
-curl -X GET http://localhost:5000/events
-curl -X GET http://localhost:5000/events/1
-curl -X PUT http://localhost:5000/events/1 -H "Content-Type: application/json" -d "{\"title\": \"Обновленный концерт\", \"description\": \"Обновленное описание\", \"date\": \"2023-12-02\", \"createdBy\": 1}"
-curl -X DELETE http://localhost:5000/events/1
-
-//функциональные команды
-curl -X POST http://localhost:5000/events -H "Content-Type: application/json" -d "{\"title\": \"Концерт\", \"description\": \"Концерт классической музыки\", \"date\": \"2023-12-01\", \"createdBy\": 1, \"location\": \"Концертный зал\"}"
-curl -X GET http://localhost:5000/events
-curl -X GET http://localhost:5000/events/1
-curl -X PUT http://localhost:5000/events/1 -H "Content-Type: application/json" -d "{\"title\": \"Обновленный концерт\", \"description\": \"Обновленное описание\", \"date\": \"2023-12-02\", \"createdBy\": 1, \"location\": \"Обновленный концертный зал\"}"

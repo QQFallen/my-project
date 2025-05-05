@@ -28,6 +28,12 @@ User.init({
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW, // Дата регистрации по умолчанию
   },
+  role: {
+    type: DataTypes.ENUM('user', 'admin'),
+    allowNull: false,
+    defaultValue: 'user',
+    comment: 'Роль пользователя'
+  },
 }, {
   sequelize,
   modelName: 'User',

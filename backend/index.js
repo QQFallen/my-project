@@ -11,6 +11,8 @@ const eventRoutes = require('./routes/eventRoutes');
 const { ValidationError, NotFoundError } = require('./errors'); // Импортируем кастомные ошибки
 const passport = require('./config/passport');
 const authRoutes = require('./routes/auth');
+const publicRoutes = require('./routes/public');
+const protectedRoutes = require('./routes/protected');
 
 // Загрузка переменных окружения
 dotenv.config();
@@ -28,8 +30,11 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 
 // Подключение маршрутов
 app.use('/users', userRoutes);
-app.use('/events', eventRoutes);
+// app.use('/events', eventRoutes); // Удалено, чтобы не было дублирования маршрутов
 app.use('/auth', authRoutes);
+app.use(passport.initialize());
+app.use(publicRoutes); // Публичные маршруты (например, GET /events)
+app.use(protectedRoutes); // Защищённые маршруты (например, POST /events)
 
 /**
  * @swagger

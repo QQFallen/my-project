@@ -93,24 +93,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-/**
- * @swagger
- * /events/{id}:
- *   get:
- *     summary: Get event by ID
- *     tags: [Events]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Event details
- *       404:
- *         description: Event not found
- */
+// GET запрос по ID без Swagger документации
 router.get('/:id', async (req, res, next) => {
   try {
     const event = await Event.findByPk(req.params.id);
@@ -181,24 +164,7 @@ router.put('/:id', async (req, res, next) => {
   }
 });
 
-/**
- * @swagger
- * /events/{id}:
- *   delete:
- *     summary: Delete event
- *     tags: [Events]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Event deleted successfully
- *       404:
- *         description: Event not found
- */
+// DELETE запрос без Swagger документации
 router.delete('/:id', async (req, res, next) => {
   try {
     const event = await Event.findByPk(req.params.id);
