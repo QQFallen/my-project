@@ -9,6 +9,7 @@ const { sequelize } = require('./config/db'); // Импортируем sequeliz
 const userRoutes = require('./routes/userRoutes');
 const eventRoutes = require('./routes/eventRoutes');
 const { ValidationError, NotFoundError } = require('./errors'); // Импортируем кастомные ошибки
+const passport = require('./config/passport');
 
 // Загрузка переменных окружения
 dotenv.config();
@@ -28,10 +29,61 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 app.use('/users', userRoutes);
 app.use('/events', eventRoutes);
 
+/**
+ * @swagger
+ * /protected:
+ *   get:
+ *     summary: Защищенный маршрут, требующий JWT токен
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Успешный доступ к защищенному маршруту
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Доступ разрешён!
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                     name:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *       401:
+ *         description: Не авторизован
+ *       403:
+ *         description: Доступ запрещен
+ */
+app.get('/protected', passport.authenticate('jwt', { session: false }), (req, res) => {
+  res.json({ message: 'Доступ разрешён!', user: req.user });
+});
+
 // Централизованный обработчик ошибок
 app.use((err, req, res, next) => {
   console.error('Ошибка:', err);
   
+  if (err.name === 'JsonWebTokenError') {
+    return res.status(401).json({ 
+      error: 'Неверный токен',
+      message: 'Токен недействителен или подделан'
+    });
+  }
+
+  if (err.name === 'TokenExpiredError') {
+    return res.status(401).json({ 
+      error: 'Токен истек',
+      message: 'Срок действия токена истек'
+    });
+  }
+
   if (err instanceof ValidationError) {
     return res.status(err.statusCode || 400).json({ 
       error: err.message,

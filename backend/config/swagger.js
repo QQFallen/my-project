@@ -7,7 +7,7 @@ const options = {
     info: {
       title: 'Event Management API',
       version: '1.0.0',
-      description: 'API documentation for Event Management System',
+      description: 'API документация для системы управления мероприятиями',
     },
     servers: [
       {
@@ -16,16 +16,32 @@ const options = {
       },
     ],
     components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'JWT токен для авторизации. Формат: Bearer <token>'
+        }
+      },
       schemas: {
         User: {
           type: 'object',
-          required: ['name', 'email'],
+          required: ['name', 'email', 'password'],
           properties: {
             name: {
-              type: 'string'
+              type: 'string',
+              description: 'Имя пользователя'
             },
             email: {
-              type: 'string'
+              type: 'string',
+              format: 'email',
+              description: 'Email пользователя'
+            },
+            password: {
+              type: 'string',
+              format: 'password',
+              description: 'Пароль пользователя'
             }
           }
         },
