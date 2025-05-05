@@ -10,6 +10,7 @@ const userRoutes = require('./routes/userRoutes');
 const eventRoutes = require('./routes/eventRoutes');
 const { ValidationError, NotFoundError } = require('./errors'); // Импортируем кастомные ошибки
 const passport = require('./config/passport');
+const authRoutes = require('./routes/auth');
 
 // Загрузка переменных окружения
 dotenv.config();
@@ -28,6 +29,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 // Подключение маршрутов
 app.use('/users', userRoutes);
 app.use('/events', eventRoutes);
+app.use('/auth', authRoutes);
 
 /**
  * @swagger

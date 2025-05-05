@@ -45,6 +45,26 @@ const options = {
             }
           }
         },
+        AuthRegisterRequest: {
+          type: 'object',
+          required: ['email', 'name', 'password'],
+          properties: {
+            email: {
+              type: 'string',
+              format: 'email',
+              description: 'Email пользователя'
+            },
+            name: {
+              type: 'string',
+              description: 'Имя пользователя'
+            },
+            password: {
+              type: 'string',
+              format: 'password',
+              description: 'Пароль пользователя'
+            }
+          }
+        },
         Event: {
           type: 'object',
           required: ['title', 'date', 'createdBy', 'location'],
