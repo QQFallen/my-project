@@ -1,4 +1,5 @@
 echo "=== HUSKY HOOK STARTED ==="
+exit 1
 export LANG="ru_RU.UTF-8"
 export LC_ALL="ru_RU.UTF-8"
 #!/usr/bin/env sh
