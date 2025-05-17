@@ -1,6 +1,0 @@
-cначала все коммиты и пуши в develop
-git add .
-git commit -m "..."
-git push origin develop
-
-потом мерж рыгвест в мейн
