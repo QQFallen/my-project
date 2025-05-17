@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🚀 Husky: запуск pre-commit хука..."
+npx lint-staged
+echo "✅ Husky: проверка завершена!"
