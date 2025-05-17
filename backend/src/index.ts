@@ -13,7 +13,7 @@ import publicRoutes from './routes/public';
 import './models/User';
 import './models/Event';
 import { errorHandler } from '@middleware/errorHandler';
-
+//braindeadfrom husky
 // Загрузка переменных окружения
 dotenv.config();
 
