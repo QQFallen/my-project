@@ -1,3 +1,4 @@
+// Тестовая строка для проверки Husky и lint-staged
 export class ValidationError extends Error {
     constructor(message: string) {
         super(message);
@@ -17,4 +18,12 @@ export class AuthorizationError extends Error {
         super(message);
         this.name = 'AuthorizationError';
     }
-} 
+}
+
+// Новая ошибка для теста
+export class CustomTestError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'CustomTestError';
+    }
+}
