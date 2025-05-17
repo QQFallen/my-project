@@ -4,4 +4,5 @@ git commit -m "..."
 git push origin develop
 
 потом мерж рыгвест в мейн
+gfege
 
