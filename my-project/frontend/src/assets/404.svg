@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800px" height="400px" viewBox="0 0 800 400" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g transform="translate(0.000000, 50.000000)">
+            <path d="M250,0 C330,0 350,120 350,150 C350,180 330,300 250,300 C170,300 150,180 150,150 C150,120 170,0 250,0 Z" fill="#232324"/>
+            <path d="M550,0 C630,0 650,120 650,150 C650,180 630,300 550,300 C470,300 450,180 450,150 C450,120 470,0 550,0 Z" fill="#232324"/>
+            <path d="M400,50 L400,250" stroke="#e53935" stroke-width="40" stroke-linecap="round"/>
+            <text font-family="Arial-BoldMT, Arial" font-size="200" font-weight="bold" fill="#e53935">
+                <tspan x="190" y="200">4</tspan>
+                <tspan x="495" y="200">4</tspan>
+            </text>
+        </g>
+    </g>
+</svg> 

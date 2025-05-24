@@ -1,0 +1,56 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #8b0000;
+  color: white;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+}
+
+.nav {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.eventsLink {
+  padding: 0.3rem 0.7rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+a {
+  color: white;
+  text-decoration: none;
+}
+
+button {
+  background: #e53935;
+  border: none;
+  padding: 0.3rem 0.7rem;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background: #ff8a80;
+  color: #b71c1c;
+}
+
+.welcome {
+  margin-right: 1rem;
+}

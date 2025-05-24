@@ -1,0 +1,191 @@
+[33mcommit 7505b21196452b65ddec7e60ad4520448e1e7538[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdeveloplab3[m[33m)[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Sat May 17 23:01:29 2025 +0400
+
+    husky u here?
+
+[33mcommit 738762a1c5127e57df25a9e924b8fc5caab27331[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Sat May 17 22:51:12 2025 +0400
+
+    avehusky
+
+[33mcommit 561e63fdec5546a7464ca5c89cb49ac6b60e95ac[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Sat May 17 22:36:35 2025 +0400
+
+    HUSKYHUSKYHUSKY
+
+[33mcommit fbec811090b17bec435b0e043eb2835550c3a526[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Sat May 17 22:34:18 2025 +0400
+
+    test: husky finally executable
+
+[33mcommit 84bf3e40f4a47f28fc27caf4b41a99d1a16ef3ff[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Sat May 17 22:33:17 2025 +0400
+
+    test: husky finally executable
+
+[33mcommit 392f5de202113a82ff5e60d2b509d0111958b8f1[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Sat May 17 22:31:58 2025 +0400
+
+    test: husky finally executable
+
+[33mcommit 9e0b03fd6f62b0aa62d878e5815644e50adfc8c4[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Sat May 17 22:28:49 2025 +0400
+
+    test: husky hook path set
+
+[33mcommit 622d0501236a862dc3fa0eb044f88f97f91de310[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Sat May 17 22:27:20 2025 +0400
+
+    test: husky hook path set
+
+[33mcommit a6630d1f65cca3e2281bb42d9881253e8b8fb037[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Sat May 17 22:25:16 2025 +0400
+
+    test:проверка работы husky
+
+[33mcommit 5f268c8838e4c72816780f9c6883c8e356096de7[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Sat May 17 22:21:32 2025 +0400
+
+    test:husky
+
+[33mcommit ac66cd477e2cc9ae4626377b81c546499c64de77[m[33m ([m[1;31morigin/develop[m[33m, [m[1;32mdevelop[m[33m)[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Sat May 17 22:13:25 2025 +0400
+
+    test:husky testing
+
+[33mcommit 6d24e7d9340f0685b6ff6d671e9a9d5f39e0bcb5[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Sat May 17 21:48:11 2025 +0400
+
+    test: проверка работы husky
+
+[33mcommit 454ebf161d4465c2f48984e060746c2d28f42011[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Mon May 5 12:48:35 2025 +0400
+
+    исправил текстовый файл)
+
+[33mcommit d2b8ba137eca23db303bd8acc1ad9130994882bd[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Mon May 5 12:43:47 2025 +0400
+
+    feat:DEVlaba2-functional3
+
+[33mcommit 2afe47f9d543933f19adf83f1d2a8e7144c952ee[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Mon May 5 11:59:02 2025 +0400
+
+    feat:DEVlaba2-UsePassportForProtectRoutes
+
+[33mcommit 2ac1097f9dd0099c9a88b472a486b6b9ff189699[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Mon May 5 11:32:02 2025 +0400
+
+    feat:DEVlaba2-AuthUsersFromSwagger
+
+[33mcommit 9fb0fb3b9f6ce9f487d472e316a08cb1261a1c61[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Mon May 5 10:40:39 2025 +0400
+
+    feat:DEVlaba2Register
+
+[33mcommit 90932ab5e74fc7bd1a55c6122897d1bef1aa5835[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Mon May 5 10:29:33 2025 +0400
+
+    feat: add JWT authentication and protected routes
+
+[33mcommit 56a3fd2ac83e4cd6454699bac90c02c86feefb9f[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Sun May 4 18:30:58 2025 +0400
+
+    fix:Laba1routes
+
+[33mcommit 34a9e09884e4eeee1715fee1a1b7f6c329cb84b7[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Tue Apr 22 13:24:18 2025 +0400
+
+    feat: добавлено улушенное логирование
+
+[33mcommit b381a29ce9d57f362d9be0f946ecb3e0c8c7f4cd[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Tue Apr 22 12:32:11 2025 +0400
+
+    feat:Добавлен swagger
+
+[33mcommit f7eebe9dbc27367e4fcc8979a7b701dfacfce85e[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Thu Apr 17 21:57:34 2025 +0400
+
+    Add files via upload
+
+[33mcommit ada314a967492997bbc8df7d92869cf325591a09[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Thu Apr 17 21:54:02 2025 +0400
+
+    feat: Добавления улучшения
+
+[33mcommit c463a2700f9adbf91e93af3e74f3c0ac690f8de7[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Thu Apr 17 21:44:22 2025 +0400
+
+    feat: Функциональные команды
+
+[33mcommit b2f9ef2ad10003e447693f1dd01c34d1191e0276[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Thu Apr 17 20:33:46 2025 +0400
+
+    feat: Реализация API для работы с пользователями
+
+[33mcommit 0dceacdab8fb2bd0b99d6855b7260049f0864f92[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Thu Apr 17 20:26:13 2025 +0400
+
+    feat: Реализация API для работы с мероприятиями
+
+[33mcommit 089803e72bc870cf617e5dc83592875f38707d9c[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Thu Apr 17 20:11:54 2025 +0400
+
+    feat:Добавлены пользоавтели и мероприятия
+
+[33mcommit baebea3e720bd1f607f95b02c8eb255943b625b9[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Thu Apr 17 19:14:55 2025 +0400
+
+    feat: feat: добавлена проверка соединения с базой данных в index.js
+
+[33mcommit 64afe5628ea71d76792266a2f09c14ab4ed04376[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Thu Apr 17 19:04:46 2025 +0400
+
+    feat: Добавлено подключение к базе данных
+
+[33mcommit 0f09b44f17ee899db1a35263aef519cac6eb29a9[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Thu Apr 17 17:39:51 2025 +0400
+
+    feat: добавлен сервер на Express в backend
+
+[33mcommit 05b9f98413b30884a8681418e6dbc922d19bde2c[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Thu Apr 17 17:32:33 2025 +0400
+
+    feat: добавлен сервер на Express в backend
+
+[33mcommit 86e97bd3bce0787b2d02366df201ed44771ec4d7[m
+Author: QQFallen <raskinkakaskin@gmail.com>
+Date:   Thu Apr 17 17:14:25 2025 +0400
+
+    Initial commit
