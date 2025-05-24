@@ -2,8 +2,8 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./LoginPage.module.scss";
-import { login } from "@api/authService";
-import { saveToken } from "@utils/localStorage";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { loginUser } from "../../features/auth/authSlice";
 
 interface ValidationErrors {
   email?: string;
@@ -13,10 +13,11 @@ interface ValidationErrors {
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { isLoading, error } = useAppSelector((state) => state.auth);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<ValidationErrors>({});
-  const [isLoading, setIsLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
   const validateForm = (): boolean => {
@@ -44,16 +45,11 @@ const LoginPage = () => {
       return;
     }
 
-    setIsLoading(true);
     try {
-      const response = await login({ email, password });
-      if (response.success && response.token) {
-        saveToken(response.token);
+      const result = await dispatch(loginUser({ email, password })).unwrap();
+      if (result.success) {
         navigate("/all-events");
-      } else {
-        setErrors({ general: "Не удалось войти в систему" });
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       if (err.response?.data?.errors) {
         setErrors(err.response.data.errors);
@@ -64,18 +60,16 @@ const LoginPage = () => {
           general: "Произошла ошибка при входе. Пожалуйста, попробуйте снова.",
         });
       }
-    } finally {
-      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    if (errors.general || errors.email || errors.password) {
+    if (errors.general || errors.email || errors.password || error) {
       setShowToast(true);
       const timer = setTimeout(() => setShowToast(false), 3500);
       return () => clearTimeout(timer);
     }
-  }, [errors]);
+  }, [errors, error]);
 
   return (
     <div className={styles.container}>
@@ -103,7 +97,7 @@ const LoginPage = () => {
           {isLoading ? "Вход..." : "Войти"}
         </button>
       </form>
-      {showToast && (errors.general || errors.email || errors.password) && (
+      {showToast && (errors.general || errors.email || errors.password || error) && (
         <div style={{
           position: 'fixed',
           top: '32px',
@@ -121,7 +115,7 @@ const LoginPage = () => {
           textAlign: 'center',
           letterSpacing: '0.01em',
         }}>
-          {errors.general || errors.email || errors.password}
+          {errors.general || errors.email || errors.password || error}
         </div>
       )}
       <p className={styles.registerLink}>

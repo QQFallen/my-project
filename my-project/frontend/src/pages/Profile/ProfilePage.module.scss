@@ -1,0 +1,101 @@
+.container {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #18181a;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(229,57,53,0.10);
+  color: #fff;
+}
+
+.profileCard {
+  background: #232324;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 12px rgba(229,57,53,0.10);
+  text-align: center;
+
+  h2 {
+    color: #e53935;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+  }
+
+  .info {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: #ff8a80;
+  }
+}
+
+.eventsSection {
+  background: #232324;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 12px rgba(229,57,53,0.10);
+
+  h3 {
+    color: #e53935;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    text-align: center;
+  }
+}
+
+.eventsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.eventCard {
+  background: #18181a;
+  border-radius: 12px;
+  padding: 1.2rem;
+  box-shadow: 0 2px 8px rgba(229,57,53,0.10);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  transition: box-shadow 0.2s, transform 0.2s;
+
+  &:hover {
+    box-shadow: 0 0 24px 4px rgba(229,57,53,0.25);
+    transform: translateY(-2px) scale(1.03);
+  }
+
+  .eventTitle {
+    color: #e53935;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .eventDate {
+    color: #ff8a80;
+    font-size: 0.95rem;
+  }
+}
+
+.noEvents {
+  color: #666;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.loading {
+  color: #e53935;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.error {
+  color: #e74c3c;
+  background: #fdf3f2;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  margin: 2rem auto;
+  max-width: 400px;
+} 

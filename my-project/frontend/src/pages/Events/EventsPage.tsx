@@ -3,6 +3,8 @@ import styles from "./EventsPage.module.scss";
 import { fetchEvents } from "@api/eventService";
 import { getToken } from "@utils/localStorage";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { fetchEventsThunk } from "../../features/events/eventsSlice";
 
 interface Event {
   id: string;
@@ -11,46 +13,18 @@ interface Event {
   date: string;
   deletedAt?: string | null;
   imageUrl?: string | null;
+  createdBy?: string;
 }
 
 const EventsPage = () => {
   const navigate = useNavigate();
-  const [events, setEvents] = useState<Event[]>([]);
+  const dispatch = useAppDispatch();
+  const { events, isLoading, error, isDataInvalid } = useAppSelector((state) => state.events);
   const [showDeleted, setShowDeleted] = useState(false);
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [isDataInvalid, setIsDataInvalid] = useState(false);
-
-  const token = getToken();
 
   useEffect(() => {
-    const loadEvents = async () => {
-      try {
-        console.log("Loading events...");
-        setIsLoading(true);
-        setError("");
-        const data = await fetchEvents(false);
-        console.log("Events loaded:", data);
-        if (!Array.isArray(data)) {
-          setIsDataInvalid(true);
-          setEvents([]);
-        } else {
-          setEvents(data);
-        }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (err: any) {
-        console.error("Error loading events:", err);
-        console.error("Error response:", err.response);
-        setError(
-          err.response?.data?.message || "Ошибка при загрузке мероприятий",
-        );
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadEvents();
-  }, []);
+    dispatch(fetchEventsThunk(false));
+  }, [dispatch]);
 
   if (isLoading) {
     return (
@@ -131,6 +105,12 @@ const EventsPage = () => {
                   </span>
                 )}
               </div>
+              {event.createdBy && (
+                <div className={styles.creator}>
+                  <span className={styles.icon}>👤</span>
+                  Создатель: {event.createdBy}
+                </div>
+              )}
             </div>
           ))}
         </div>

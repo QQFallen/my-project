@@ -25,6 +25,7 @@ export const authenticate = async (
   res: Response,
   next: NextFunction,
 ): Promise<Response | void> => {
+  console.log('AUTH MIDDLEWARE:', req.header('Authorization'));
   const authHeader = req.header('Authorization');
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -60,6 +61,7 @@ export const authenticate = async (
       user: user.get({ plain: true }),
       token,
     };
+    console.log('AUTH OK, user:', req.auth.user);
 
     next();
   } catch (err: unknown) {

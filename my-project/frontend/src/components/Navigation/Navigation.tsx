@@ -72,7 +72,13 @@ const Navigation = () => {
         <Link to="/all-events" className={styles.eventsLink}>Мероприятия</Link>
         {user ? (
           <>
-            <span className={styles.welcome}>{displayName}</span>
+            <Link
+              to="/profile"
+              className={styles.welcome}
+              style={{ cursor: 'pointer' }}
+            >
+              {displayName}
+            </Link>
             <button onClick={handleLogout} className={styles.logoutButton}>
               Выйти
             </button>

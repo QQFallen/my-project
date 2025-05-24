@@ -69,9 +69,21 @@ Event.init(
     }
 );
 
-// Определяем связь с пользователем после создания таблиц
 const setupAssociations = async () => {
     try {
+    // Получаем список всех ограничений таблицы Events через прямой SQL-запрос
+    const [constraints] = await sequelize.query(`
+      SELECT conname as "constraintName"
+      FROM pg_constraint
+      WHERE conrelid = '\"Events\"'::regclass
+    `);
+    const exists = (constraints as any[]).some(
+      (c: any) => c.constraintName === 'events_createdby_fkey'
+    );
+    if (exists) {
+      console.log('Внешний ключ уже существует, пропускаем добавление.');
+      return;
+    }
         await sequelize.getQueryInterface().addConstraint('Events', {
             fields: ['createdBy'],
             type: 'foreign key',
@@ -89,7 +101,6 @@ const setupAssociations = async () => {
     }
 };
 
-// Вызываем функцию настройки связей после синхронизации
 Event.afterSync(() => {
     setupAssociations();
 });

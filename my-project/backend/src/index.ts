@@ -124,10 +124,6 @@ app.get('/', (_req: Request, res: Response) => {
 
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
-app.use('/events', eventRoutes);
-
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
 app.use('/api/events', eventRoutes);
 
 // Error handler

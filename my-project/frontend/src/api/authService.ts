@@ -73,3 +73,8 @@ export const logout = async (): Promise<void> => {
 export const isAuthenticated = (): boolean => {
   return !!getStorageToken();
 };
+
+export const fetchProfile = async () => {
+  const response = await axiosInstance.get("/auth/check-auth");
+  return response.data;
+};

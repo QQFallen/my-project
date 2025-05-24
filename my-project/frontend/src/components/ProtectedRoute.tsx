@@ -1,45 +1,14 @@
-import { JSX, useEffect, useState } from "react";
-import { getToken } from "@utils/localStorage";
-import { checkAuth } from "@api/authService";
-import { useNavigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
+import { useAppSelector } from "../app/hooks";
 
-interface Props {
-  children: JSX.Element;
-}
+export const ProtectedRoute = () => {
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
 
-const ProtectedRoute = ({ children }: Props) => {
-  const navigate = useNavigate();
-  const [checking, setChecking] = useState(true);
-  const [isAuthorized, setIsAuthorized] = useState(false);
-
-  useEffect(() => {
-    const verify = async () => {
-      const token = getToken();
-      if (!token) {
-        navigate("/login");
-        return;
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
       }
 
-      try {
-        const res = await checkAuth(token);
-        if (res?.user) {
-          setIsAuthorized(true);
-        } else {
-          navigate("/login");
-        }
-      } catch {
-        navigate("/login");
-      } finally {
-        setChecking(false);
-      }
-    };
-
-    verify();
-  }, []);
-
-  if (checking) return null;
-
-  return isAuthorized ? children : null;
+  return <Outlet />;
 };
 
 export default ProtectedRoute;

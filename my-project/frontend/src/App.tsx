@@ -1,23 +1,17 @@
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { getToken } from "@utils/localStorage";
 import Navigation from "./components/Navigation/Navigation";
 import LoginPage from "@pages/Login/LoginPage";
 import { RegisterPage } from "@pages/Register/RegisterPage";
 import EventsPage from "@pages/Events/EventsPage";
 import HomePage from "@pages/Home/HomePage";
 import NotFoundPage from "@pages/NotFound/NotFoundPage";
+import ProtectedRoute from "@components/ProtectedRoute";
+import ProfilePage from "@pages/Profile/ProfilePage";
+import EventFormPage from "@pages/EventForm/EventFormPage";
 import "./App.css";
 
-const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
-  const token = getToken();
-  if (!token) {
-    return <Navigate to="/login" />;
-  }
-  return <>{children}</>;
-};
-
 const PublicRoute = ({ children }: { children: React.ReactNode }) => {
-  const token = getToken();
+  const token = localStorage.getItem("token");
   if (token) {
     return <Navigate to="/all-events" />;
   }
@@ -53,6 +47,13 @@ function App() {
             }
           />
           <Route path="/all-events" element={<EventsPage />} />
+
+          <Route element={<ProtectedRoute />}>
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/event/new" element={<EventFormPage />} />
+            <Route path="/event/:id/edit" element={<EventFormPage />} />
+          </Route>
+
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>

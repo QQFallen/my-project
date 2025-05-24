@@ -3,10 +3,13 @@ import { literal, CreationAttributes, Op } from 'sequelize';
 import Event from '@models/Event';
 import dotenv from 'dotenv';
 import { authenticate } from '@middleware/auth';
+import User from '@models/User';
 
 dotenv.config();
 
 const router = Router();
+
+console.log('=== events router loaded ===');
 
 /**
  * @swagger
@@ -288,6 +291,57 @@ router.delete('/:id', async (req: Request, res: Response) => {
     res.status(500).json({
       error: 'Ошибка при удалении мероприятия',
       details: err.message,
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /events/user/{userId}:
+ *   get:
+ *     summary: Получить список мероприятий пользователя
+ *     description: Возвращает список мероприятий, созданных указанным пользователем
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         description: ID пользователя
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Список мероприятий пользователя
+ *       404:
+ *         description: Пользователь не найден
+ *       500:
+ *         description: Ошибка при получении списка мероприятий
+ */
+router.get('/user/:userId', async (req: Request, res: Response) => {
+  console.log('--- /user/:userId endpoint called ---');
+  try {
+    const { userId } = req.params;
+    const userIdNum = parseInt(userId, 10);
+
+    if (isNaN(userIdNum)) {
+      return res.status(400).json({ error: 'Некорректный ID пользователя' });
+    }
+
+    // Запрос к базе без участников
+    const events = await Event.findAll({
+      where: { createdBy: userIdNum },
+      order: [['createdAt', 'DESC']]
+    });
+
+    // Логируем результат
+    console.log('Events found:', Array.isArray(events) ? events.length : events);
+
+    // Возвращаем результат
+    res.status(200).json(events);
+  } catch (error) {
+    console.error('Ошибка в /user/:userId:', error);
+    res.status(500).json({
+      error: 'Ошибка при получении мероприятий пользователя',
+      details: error instanceof Error ? error.message : error,
     });
   }
 });

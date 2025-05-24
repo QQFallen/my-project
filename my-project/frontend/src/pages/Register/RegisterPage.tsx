@@ -1,8 +1,9 @@
 // frontend/src/pages/Register/RegisterPage.tsx
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { register } from "@api/authService";
 import styles from "./RegisterPage.module.scss";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { registerUser } from "../../features/auth/authSlice";
 
 interface ValidationErrors {
   name?: string;
@@ -14,12 +15,13 @@ interface ValidationErrors {
 
 export const RegisterPage = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { isLoading, error } = useAppSelector((state) => state.auth);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<ValidationErrors>({});
-  const [isLoading, setIsLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
   const validateForm = (): boolean => {
@@ -65,42 +67,37 @@ export const RegisterPage = () => {
       return;
     }
 
-    setIsLoading(true);
     try {
-      await register({ name, email, password });
+      const result = await dispatch(registerUser({ name, email, password })).unwrap();
+      if (result.success) {
       navigate("/login");
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      console.error("Registration error:", error);
-
-      if (error.response?.status === 409) {
+      }
+    } catch (err: any) {
+      if (err.response?.status === 409) {
         setErrors({
           general: "Пользователь с таким email уже зарегистрирован",
         });
-      } else if (error.response?.status === 400) {
-        // Ошибки валидации
+      } else if (err.response?.status === 400) {
         setErrors(
-          error.response.data.errors || {
-            general: error.response.data.message,
+          err.response.data.errors || {
+            general: err.response.data.message,
           },
         );
       } else {
         setErrors({
-          general: "Пользователь с таким email уже зарегистрирован",
+          general: "Произошла ошибка при регистрации",
         });
       }
-    } finally {
-      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    if (errors.general || errors.email || errors.password || errors.name || errors.confirmPassword) {
+    if (errors.general || errors.email || errors.password || errors.name || errors.confirmPassword || error) {
       setShowToast(true);
       const timer = setTimeout(() => setShowToast(false), 3500);
       return () => clearTimeout(timer);
     }
-  }, [errors]);
+  }, [errors, error]);
 
   return (
     <div className={styles.container}>
@@ -177,7 +174,7 @@ export const RegisterPage = () => {
         Уже есть аккаунт?<Link to="/login">Войти</Link>
       </p>
 
-      {showToast && (errors.general || errors.email || errors.password || errors.name || errors.confirmPassword) && (
+      {showToast && (errors.general || errors.email || errors.password || errors.name || errors.confirmPassword || error) && (
         <div style={{
           position: 'fixed',
           top: '32px',
@@ -195,7 +192,7 @@ export const RegisterPage = () => {
           textAlign: 'center',
           letterSpacing: '0.01em',
         }}>
-          {errors.general || errors.email || errors.password || errors.name || errors.confirmPassword}
+          {errors.general || errors.email || errors.password || errors.name || errors.confirmPassword || error}
         </div>
       )}
     </div>
