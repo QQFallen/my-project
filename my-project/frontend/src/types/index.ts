@@ -1,7 +1,11 @@
 export interface User {
   id: string;
   email: string;
-  name: string;
+  firstName: string;
+  lastName: string;
+  middleName?: string;
+  gender: string;
+  dateOfBirth: string;
 }
 
 export interface Event {

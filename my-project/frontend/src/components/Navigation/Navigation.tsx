@@ -1,49 +1,22 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { checkAuth, logout } from "@api/authService";
-import { useEffect, useState } from "react";
+// import { checkAuth, logout } from "@api/authService";
+import { logout as logoutApi } from "@api/authService";
+import { useAppSelector, useAppDispatch } from "../../app/hooks";
+import { logout as logoutAction } from "../../features/auth/authSlice";
 import styles from "./Navigation.module.scss";
-
-interface User {
-  id: string;
-  email: string;
-  name?: string;
-}
+import { User } from "../../types";
 
 const Navigation = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    const loadUser = async () => {
-      if (location.pathname === "/login" || location.pathname === "/register") {
-        setUser(null);
-        return;
-      }
-
-      try {
-        const res = await checkAuth();
-        if (res.success && res.user) {
-          setUser(res.user);
-        } else {
-          setUser(null);
-        }
-      } catch (error) {
-        console.error("Error checking auth:", error);
-        setUser(null);
-      }
-    };
-
-    loadUser();
-  }, [location.pathname]);
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.auth.user) as User | null;
 
   const handleLogout = async () => {
     try {
-      await logout();
-      setUser(null);
-      setTimeout(() => {
-        navigate("/login");
-      }, 100);
+      await logoutApi();
+      dispatch(logoutAction());
+      navigate("/login");
     } catch (error) {
       console.error("Ошибка при выходе:", error);
     }
@@ -56,10 +29,11 @@ const Navigation = () => {
     }
   };
 
-  const displayName =
-    user?.name || user?.email?.split("@")[0] || "Пользователь";
-  console.log("Current user state:", user);
-  console.log("Display name:", displayName);
+  const displayNameRaw = user?.firstName || user?.email?.split("@")[0] || "Пользователь";
+  const displayName = displayNameRaw.length > 15 ? displayNameRaw.slice(0, 15) + '…' : displayNameRaw;
+
+  const isEventsActive = location.pathname === "/all-events";
+  const isProfileActive = location.pathname === "/profile";
 
   return (
     <nav className={styles.navigation}>
@@ -69,13 +43,20 @@ const Navigation = () => {
         </Link>
       </div>
       <div className={styles.links}>
-        <Link to="/all-events" className={styles.eventsLink}>Мероприятия</Link>
+        <Link 
+          to="/all-events" 
+          className={isEventsActive ? `${styles.eventsLink} ${styles.activeLinkGlow}` : `${styles.eventsLink} ${styles.otherLink}`}
+          onClick={(e) => isEventsActive && e.preventDefault()}
+        >
+          Мероприятия
+        </Link>
         {user ? (
           <>
             <Link
               to="/profile"
-              className={styles.welcome}
-              style={{ cursor: 'pointer' }}
+              className={isProfileActive ? `${styles.welcome} ${styles.activeLinkGlow}` : `${styles.welcome} ${styles.otherLink}`}
+              style={{ cursor: isProfileActive ? 'default' : 'pointer' }}
+              onClick={(e) => isProfileActive && e.preventDefault()}
             >
               {displayName}
             </Link>

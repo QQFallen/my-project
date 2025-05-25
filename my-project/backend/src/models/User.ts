@@ -4,7 +4,11 @@ import { sequelize } from '@config/db';
 class User extends Model {
     declare id: number;
     declare email: string;
-    declare name: string;
+    declare firstName: string;
+    declare lastName: string;
+    declare middleName?: string | null;
+    declare gender: string;
+    declare dateOfBirth: Date;
     declare password: string;
     declare role: 'user' | 'admin';
     declare createdAt: Date;
@@ -27,9 +31,28 @@ User.init(
                 isEmail: true
             }
         },
-        name: {
+        firstName: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
+        },
+        lastName: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        middleName: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        gender: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        dateOfBirth: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            validate: {
+                isDate: true,
+            }
         },
         password: {
             type: DataTypes.STRING,

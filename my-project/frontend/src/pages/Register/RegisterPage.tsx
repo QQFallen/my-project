@@ -10,6 +10,11 @@ interface ValidationErrors {
   email?: string;
   password?: string;
   confirmPassword?: string;
+  firstName?: string;
+  lastName?: string;
+  middleName?: string;
+  gender?: string;
+  dateOfBirth?: string;
   general?: string;
 }
 
@@ -21,17 +26,40 @@ export const RegisterPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [middleName, setMiddleName] = useState("");
+  const [gender, setGender] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [showToast, setShowToast] = useState(false);
 
   const validateForm = (): boolean => {
     const newErrors: ValidationErrors = {};
 
-    // Валидация имени
-    if (!name) {
-      newErrors.name = "Имя обязательно";
-    } else if (name.length < 2) {
-      newErrors.name = "Имя должно содержать минимум 2 символа";
+    // Валидация полей ФИО
+    if (!firstName) {
+      newErrors.firstName = "Имя обязательно";
+    }
+    if (!lastName) {
+      newErrors.lastName = "Фамилия обязательна";
+    }
+    // Отчество опционально, валидация не нужна, если пустое
+
+    // Валидация пола
+    if (!gender) {
+      newErrors.gender = "Пол обязателен";
+    }
+
+    // Валидация даты рождения
+    if (!dateOfBirth) {
+      newErrors.dateOfBirth = "Дата рождения обязательна";
+    } else {
+      // Простая проверка формата YYYY-MM-DD
+      const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+      if (!datePattern.test(dateOfBirth)) {
+        newErrors.dateOfBirth = "Неверный формат даты (ожидается ГГГГ-ММ-ДД)";
+      }
     }
 
     // Валидация email
@@ -68,9 +96,17 @@ export const RegisterPage = () => {
     }
 
     try {
-      const result = await dispatch(registerUser({ name, email, password })).unwrap();
+      const result = await dispatch(registerUser({
+        firstName,
+        lastName,
+        middleName: middleName ? middleName : null,
+        gender,
+        dateOfBirth,
+        email,
+        password
+      })).unwrap();
       if (result.success) {
-      navigate("/login");
+        navigate("/login");
       }
     } catch (err: any) {
       if (err.response?.status === 409) {
@@ -105,16 +141,73 @@ export const RegisterPage = () => {
 
       <form onSubmit={handleSubmit}>
         <div className={styles.inputGroup}>
-          <label htmlFor="name">Имя</label>
+          <label htmlFor="firstName">Имя</label>
           <input
-            id="name"
+            id="firstName"
             type="text"
             placeholder="Введите ваше имя"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
             required
             disabled={isLoading}
           />
+          {errors.firstName && <span className={styles.errorText}>{errors.firstName}</span>}
+        </div>
+
+        <div className={styles.inputGroup}>
+          <label htmlFor="lastName">Фамилия</label>
+          <input
+            id="lastName"
+            type="text"
+            placeholder="Введите вашу фамилию"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            required
+            disabled={isLoading}
+          />
+          {errors.lastName && <span className={styles.errorText}>{errors.lastName}</span>}
+        </div>
+
+        <div className={styles.inputGroup}>
+          <label htmlFor="middleName">Отчество (необязательно)</label>
+          <input
+            id="middleName"
+            type="text"
+            placeholder="Введите ваше отчество"
+            value={middleName}
+            onChange={(e) => setMiddleName(e.target.value)}
+            disabled={isLoading}
+          />
+          {errors.middleName && <span className={styles.errorText}>{errors.middleName}</span>}
+        </div>
+
+        <div className={styles.inputGroup}>
+          <label htmlFor="gender">Пол</label>
+          <select
+            id="gender"
+            value={gender}
+            onChange={(e) => setGender(e.target.value)}
+            required
+            disabled={isLoading}
+          >
+            <option value="">Выберите пол</option>
+            <option value="Мужской">Мужской</option>
+            <option value="Женский">Женский</option>
+          </select>
+          {errors.gender && <span className={styles.errorText}>{errors.gender}</span>}
+        </div>
+
+        <div className={styles.inputGroup}>
+          <label htmlFor="dateOfBirth">Дата рождения</label>
+          <input
+            id="dateOfBirth"
+            type="date"
+            value={dateOfBirth}
+            onChange={(e) => setDateOfBirth(e.target.value)}
+            required
+            disabled={isLoading}
+          />
+          {errors.dateOfBirth && <span className={styles.errorText}>{errors.dateOfBirth}</span>}
         </div>
 
         <div className={styles.inputGroup}>
@@ -174,7 +267,7 @@ export const RegisterPage = () => {
         Уже есть аккаунт?<Link to="/login">Войти</Link>
       </p>
 
-      {showToast && (errors.general || errors.email || errors.password || errors.name || errors.confirmPassword || error) && (
+      {showToast && (errors.general || errors.email || errors.password || errors.confirmPassword || errors.firstName || errors.lastName || errors.middleName || errors.gender || errors.dateOfBirth || error) && (
         <div style={{
           position: 'fixed',
           top: '32px',
@@ -192,7 +285,7 @@ export const RegisterPage = () => {
           textAlign: 'center',
           letterSpacing: '0.01em',
         }}>
-          {errors.general || errors.email || errors.password || errors.name || errors.confirmPassword || error}
+          {errors.general || errors.email || errors.password || errors.confirmPassword || errors.firstName || errors.lastName || errors.middleName || errors.gender || errors.dateOfBirth || error}
         </div>
       )}
     </div>

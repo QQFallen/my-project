@@ -9,6 +9,9 @@ import ProtectedRoute from "@components/ProtectedRoute";
 import ProfilePage from "@pages/Profile/ProfilePage";
 import EventFormPage from "@pages/EventForm/EventFormPage";
 import "./App.css";
+import { useEffect } from "react";
+import { useAppDispatch } from "./app/hooks";
+import { fetchProfile, setUser } from "./features/auth/authSlice";
 
 const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   const token = localStorage.getItem("token");
@@ -20,6 +23,17 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
 
 function App() {
   const location = useLocation();
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    if (user) {
+      dispatch(setUser(JSON.parse(user)));
+    }
+    if (token) {
+      dispatch(fetchProfile());
+    }
+  }, [dispatch]);
   const is404Page = !["/", "/login", "/register", "/all-events"].includes(
     location.pathname,
   );

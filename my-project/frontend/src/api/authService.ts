@@ -31,6 +31,9 @@ export const login = async (data: LoginData): Promise<AuthResponse> => {
   const response = await axiosInstance.post<AuthResponse>("/auth/login", data);
   if (response.data.success && response.data.token) {
     saveToken(response.data.token);
+    if (response.data.user) {
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+    }
   }
   return response.data;
 };
@@ -43,6 +46,9 @@ export const register = async (data: RegisterData): Promise<AuthResponse> => {
     );
     if (response.data.success && response.data.token) {
       saveToken(response.data.token);
+      if (response.data.user) {
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+      }
     }
     return response.data;
   } catch (error: any) {
@@ -66,6 +72,7 @@ export const logout = async (): Promise<void> => {
       await axiosInstance.post("/auth/logout");
     } finally {
       removeToken();
+      localStorage.removeItem('user');
     }
   }
 };

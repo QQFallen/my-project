@@ -14,6 +14,11 @@
   @media (min-width: 640px) {
     padding: 1rem 2rem;
   }
+
+  @media (max-width: 399px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 .logo {
@@ -41,22 +46,26 @@
   gap: 0.75rem;
   align-items: center;
 
+  @media (max-width: 399px) {
+    display: none;
+  }
+
   @media (min-width: 640px) {
     gap: 1.5rem;
   }
 
   a {
-    color: #4b5563;
+    color: #e53935;
     text-decoration: none;
     font-weight: 500;
     padding: 0.5rem;
     border-radius: 0.375rem;
     transition: all 0.2s;
-    font-size: 0.875rem;
+    font-size: 1.1rem;
 
     @media (min-width: 640px) {
       padding: 0.5rem 1rem;
-      font-size: 1rem;
+      font-size: 1.15rem;
     }
 
     &:hover {
@@ -92,13 +101,81 @@
     background-color: #dc3545;
     color: white;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, box-shadow 0.2s ease;
     font-weight: 500;
 
     &:hover {
       background-color: #c82333;
+      box-shadow: 0 0 15px 5px rgba(229, 57, 53, 0.6);
+      color: #fff;
     }
   }
+}
+
+.burgerButton {
+  display: none;
+  background: none;
+  border: none;
+  color: #e53935;
+  font-size: 1.5rem;
+  cursor: pointer;
+
+  @media (max-width: 399px) {
+    display: block;
+  }
+}
+
+.burgerMenu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: #18181a;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+  padding: 1rem;
+
+  &.open {
+    display: block;
+  }
+
+  .menuLinks {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    a,
+    button {
+      color: #e53935;
+      text-decoration: none;
+      font-size: 1.1rem;
+      padding: 0.5rem;
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: none;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #232324;
+      }
+    }
+  }
+}
+
+.activeLinkGlow {
+  box-shadow: none;
+  pointer-events: none;
+  cursor: default !important;
+  transition: color 0.2s;
+}
+
+.disabledLink {
+  opacity: 0.6;
+  pointer-events: none;
+  cursor: default !important;
+  text-decoration: none;
 }
 
 @media (max-width: 420px) {

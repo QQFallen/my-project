@@ -13,11 +13,13 @@
 
 .header {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
   flex-wrap: wrap;
   gap: 1rem;
+  padding-left: 2rem;
+  padding-right: 1rem;
 
   h2 {
     margin: 0;
@@ -56,10 +58,15 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 1rem;
+  justify-items: center;
 
-  @media (min-width: 640px) {
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
+  }
+
+  @media (min-width: 1280px) {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
@@ -208,4 +215,64 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.burgerButton {
+  display: none;
+  background: none;
+  border: none;
+  color: #e53935;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+
+  @media (max-width: 399px) {
+    display: block;
+  }
+
+  &:hover {
+    box-shadow: 0 0 15px 5px rgba(229, 57, 53, 0.4);
+  }
+}
+
+.burgerMenu {
+  display: none;
+  position: absolute;
+  top: auto;
+  left: 0;
+  width: 100%;
+  background-color: #18181a;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+  padding: 1rem;
+  flex-direction: column;
+
+  &.open {
+    display: flex;
+  }
+
+  a.burgerLink,
+  button.burgerLogoutButton {
+    color: #e53935;
+    text-decoration: none;
+    font-size: 1.1rem;
+    padding: 0.5rem;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #232324;
+      box-shadow: 0 0 15px 5px rgba(229, 57, 53, 0.4);
+    }
+  }
+}
+
+@media (min-width: 400px) {
+  .burgerButton,
+  .burgerMenu {
+    display: none !important;
+  }
 }

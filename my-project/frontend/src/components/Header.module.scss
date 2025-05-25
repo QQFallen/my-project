@@ -2,55 +2,69 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
-  background-color: #8b0000;
-  color: white;
+  padding: 16px 32px;
+  background-color: #18181a;
+  color: #ccc;
 }
 
 .logo {
   font-size: 1.5rem;
   font-weight: bold;
-  color: white;
+  color: #e53935;
   text-decoration: none;
 }
 
 .nav {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
   align-items: center;
 }
 
 .eventsLink {
-  padding: 0.3rem 0.7rem;
+  padding: 0.375em;
   border-radius: 4px;
-  transition: background-color 0.2s;
-  
+  transition: all 0.25s;
+  color: #ccc;
+  font-weight: 500;
+  background: transparent;
+  font-size: 0.875em;
+
   &:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: #232224;
+    color: #fff;
   }
 }
 
+.activeLink {
+  color: #e53935 !important;
+  background-color: transparent;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
 a {
-  color: white;
+  color: #ccc;
   text-decoration: none;
 }
 
 button {
   background: #e53935;
   border: none;
-  padding: 0.3rem 0.7rem;
+  padding: 0.3rem 0.75em;
   border-radius: 4px;
   color: white;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 500;
   transition: background 0.2s;
-}
 
-button:hover {
-  background: #ff8a80;
-  color: #b71c1c;
+  &:hover {
+    background: #ff8a80;
+    box-shadow: none;
+  }
 }
 
 .welcome {
   margin-right: 1rem;
+  color: #ccc;
+  font-weight: 500;
 }

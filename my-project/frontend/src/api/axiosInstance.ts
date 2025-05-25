@@ -3,7 +3,7 @@ import { getToken as getStorageToken } from "@utils/localStorage";
 
 // В режиме разработки используем относительные пути
 const isDevelopment = import.meta.env.MODE === "development";
-const API_BASE_URL = isDevelopment ? "" : import.meta.env.VITE_API_URL;
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 console.log("[axios] Environment:", import.meta.env.MODE);
 console.log("[axios] baseURL =", API_BASE_URL);

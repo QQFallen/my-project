@@ -60,6 +60,7 @@
   align-items: flex-start;
   justify-content: center;
   transition: box-shadow 0.2s, transform 0.2s;
+  position: relative;
 
   &:hover {
     box-shadow: 0 0 24px 4px rgba(229,57,53,0.25);
@@ -76,6 +77,68 @@
     color: #ff8a80;
     font-size: 0.95rem;
   }
+  .eventLocation {
+    color: #ff8a80;
+  }
+  .editBtn {
+    background: #e53935;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1.2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+
+    &:hover {
+      background: #e53935;
+      box-shadow: 0 0 15px 5px rgba(229, 57, 53, 0.6);
+      color: #fff;
+    }
+  }
+}
+
+.deleteCircleBtn {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #e53935;
+  color: #fff;
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+  z-index: 2;
+  transform-origin: center;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes spin90 {
+  0% { transform: rotate(0deg) scale(1); }
+  100% { transform: rotate(90deg) scale(1.5); }
+}
+
+.deleteCircleBtn:hover:not(:disabled) {
+  animation: spin90 0.3s linear forwards;
+  box-shadow: 0 0 15px 5px rgba(229, 57, 53, 0.6);
+}
+
+.deleteCircleBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .noEvents {
@@ -98,4 +161,188 @@
   text-align: center;
   margin: 2rem auto;
   max-width: 400px;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #232224;
+  color: #fff;
+  padding: 2rem 2.5rem;
+  border-radius: 10px;
+  min-width: 350px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.modalContent {
+  max-width: 400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  h2 {
+    color: #fff;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+  }
+}
+
+.modal input,
+.modal .eventForm textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background: #282828;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.modal textarea {
+  min-height: 60px;
+  resize: vertical;
+}
+
+.modalActions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.modalActions button {
+  background: #e53935;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+
+  &:hover:not(:last-child) {
+    background: #e53935;
+    box-shadow: 0 0 15px 5px rgba(229, 57, 53, 0.6);
+    color: #fff;
+  }
+}
+
+.modalActions button:last-child {
+  background: #444;
+  transition: background 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    background: #444;
+    box-shadow: none;
+    color: #fff;
+  }
+}
+
+.modalActions button.cancelBtn:hover,
+.modalActions button.submitBtn:hover {
+  background-color: #e53935;
+  box-shadow: 0 0 15px 5px rgba(229, 57, 53, 0.6);
+  color: #fff;
+}
+
+.createEventBtn {
+  background-color: #e53935;
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    background-color: #e53935;
+    box-shadow: 0 0 15px 5px rgba(229, 57, 53, 0.4);
+    color: #fff;
+  }
+}
+
+.logoutButtonProfile {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  background-color: #dc3545;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.2s ease;
+  font-size: 1rem;
+  font-weight: 500;
+  z-index: 100;
+
+  &:hover {
+    background-color: #c82333;
+    box-shadow: 0 0 15px 5px rgba(229, 57, 53, 0.6);
+    color: #fff;
+  }
+}
+
+.eventForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background-color: #232324;
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.inputField {
+  // ... existing code ...
+}
+
+.cancelBtn {
+  /* Существующие стили для кнопки Отмена */
+  &:hover {
+    /* Убираем фон */
+    color: #fff;
+  }
+}
+
+.submitBtn {
+  /* Существующие стили для кнопки Создать */
+  &:hover {
+    background-color: #e53935; /* Красный фон (если нужен) */
+    box-shadow: 0 0 15px 5px rgba(229, 57, 53, 0.6); /* Красное свечение */
+    color: #fff; /* Белый текст */
+  }
+}
+
+.modal input[type="date"],
+.modal input[type="time"],
+.modal input[type="datetime-local"] {
+  background: #282828 !important;
+}
+
+.eventLabel {
+  color: #fff;
+  font-weight: bold;
+}
+.eventValue {
+  color: #e53935;
+  font-weight: normal;
 } 

@@ -47,7 +47,7 @@ export const authenticate = async (
     // 2. Поиск пользователя
     const user = await User.findOne({
       where: { id: decoded.id },
-      attributes: ['id', 'email', 'name'],
+      attributes: ['id', 'email', 'firstName', 'lastName', 'middleName', 'gender', 'dateOfBirth'],
     });
 
     if (!user) {

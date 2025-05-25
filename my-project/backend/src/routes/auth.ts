@@ -100,7 +100,11 @@ interface JwtUserPayload {
 }
 
 interface RegisterInput {
-  name: string;
+  firstName: string;
+  lastName: string;
+  middleName?: string;
+  gender: string;
+  dateOfBirth: string;
   email: string;
   password: string;
 }
@@ -113,7 +117,10 @@ interface LoginInput {
 const validateRegisterInput = (data: Partial<RegisterInput>) => {
   const errors: Record<string, string> = {};
 
-  if (!data.name?.trim()) errors.name = 'Имя обязательно';
+  if (!data.firstName?.trim()) errors.firstName = 'Имя обязательно';
+  if (!data.lastName?.trim()) errors.lastName = 'Фамилия обязательна';
+  if (!data.gender?.trim()) errors.gender = 'Пол обязателен';
+  if (!data.dateOfBirth?.trim()) errors.dateOfBirth = 'Дата рождения обязательна';
   if (!data.email?.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
     errors.email = 'Некорректный email';
   }
@@ -196,7 +203,11 @@ router.post('/register', async (req: Request, res: Response) => {
 
     const usersCount = await User.count();
     const userData = {
-      name: req.body.name,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      middleName: req.body.middleName || null,
+      gender: req.body.gender,
+      dateOfBirth: req.body.dateOfBirth,
       email: req.body.email,
       password: await bcrypt.hash(req.body.password, 10),
       role: usersCount === 0 ? 'admin' : 'user',
@@ -225,7 +236,11 @@ router.post('/register', async (req: Request, res: Response) => {
       token,
       user: {
         id: user.id,
-        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        middleName: user.middleName,
+        gender: user.gender,
+        dateOfBirth: user.dateOfBirth,
         email: user.email,
         createdAt: user.createdAt,
       },
@@ -322,7 +337,11 @@ router.post('/login', async (req: Request, res: Response) => {
       token,
       user: {
         id: user.id,
-        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        middleName: user.middleName,
+        gender: user.gender,
+        dateOfBirth: user.dateOfBirth,
         email: user.email,
       },
     });
