@@ -4,10 +4,23 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { fetchProfile } from "../../features/auth/authSlice";
 import { eventService } from "../../api/eventService";
 import Navigation from '../../components/Navigation/Navigation';
-import { Event, User } from '../../types';
+import { User } from '../../types';
 import { logout } from '@api/authService';
 import { useNavigate } from 'react-router-dom';
 import { updateProfile } from "@api/userService";
+import eventStyles from '../Events/EventsPage.module.scss';
+import { YMaps, Map, Placemark } from '@pbe/react-yandex-maps';
+
+interface Event {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+  location: string;
+  createdBy?: string;
+  deletedAt?: string | null;
+  imageUrl?: string | null;
+}
 
 const ProfilePage = () => {
   const dispatch = useAppDispatch();
@@ -37,6 +50,9 @@ const ProfilePage = () => {
     general?: string;
   }>({});
   const [eventErrors, setEventErrors] = useState<{ [key: string]: string }>({});
+  const [addresses, setAddresses] = useState<{ [id: string]: string }>({});
+  const [coords, setCoords] = useState<[number, number] | null>(null);
+  const [searchValue, setSearchValue] = useState('');
 
   useEffect(() => {
     dispatch(fetchProfile());
@@ -58,6 +74,24 @@ const ProfilePage = () => {
     };
     fetchEvents();
   }, [user]);
+
+  useEffect(() => {
+    async function fetchAddresses() {
+      if (!Array.isArray(events)) return;
+      const newAddresses: { [id: string]: string } = {};
+      await Promise.all(events.map(async (event) => {
+        if (event.location) {
+          const [lat, lng] = event.location.split(',').map(Number);
+          const res = await fetch(`https://geocode-maps.yandex.ru/1.x/?apikey=d7d5d9a1-c39b-429b-9aa1-19281ca00b45&format=json&geocode=${lng},${lat}`);
+          const data = await res.json();
+          const geoObj = data.response.GeoObjectCollection.featureMember[0]?.GeoObject;
+          newAddresses[event.id] = geoObj?.metaDataProperty?.GeocoderMetaData?.text || '';
+        }
+      }));
+      setAddresses(newAddresses);
+    }
+    fetchAddresses();
+  }, [events]);
 
   const openEditModal = (event: Event) => {
     setEditEvent(event);
@@ -195,6 +229,22 @@ const ProfilePage = () => {
   // Функция для сокращения длинных строк
   const getShortText = (text: string) => text.length > 15 ? text.slice(0, 15) + '…' : text;
 
+  async function handleAddressSearch() {
+    if (!searchValue) return;
+    const response = await fetch(
+      `https://geocode-maps.yandex.ru/1.x/?apikey=d7d5d9a1-c39b-429b-9aa1-19281ca00b45&format=json&geocode=${encodeURIComponent(searchValue)}`
+    );
+    const data = await response.json();
+    const pos = data.response.GeoObjectCollection.featureMember[0]?.GeoObject?.Point?.pos;
+    if (pos) {
+      const [lng, lat] = pos.split(' ').map(Number);
+      setCoords([lat, lng]);
+      setForm({ ...form, location: `${lat},${lng}` });
+    } else {
+      alert('Адрес не найден');
+    }
+  }
+
   if (isLoading) {
     return <div className={styles.loading}>Загрузка профиля...</div>;
   }
@@ -218,65 +268,127 @@ const ProfilePage = () => {
           </div>
           <button className={styles.editBtn} onClick={openProfileModal}>Редактировать профиль</button>
         </div>
-        <div className={styles.eventsSection}>
-          <h3>Мои мероприятия</h3>
+        <div className={eventStyles.container}>
+          <h2 style={{ textAlign: 'center' }}>Мои мероприятия</h2>
           {eventsLoading ? (
-            <div className={styles.loading}>Загрузка мероприятий...</div>
+            <div className={eventStyles.loading}>Загрузка мероприятий...</div>
           ) : eventsError ? (
-            <div className={styles.error}>{eventsError}</div>
-          ) : events.length > 0 ? (
-            <div className={styles.eventsGrid}>
+            <div className={eventStyles.error}>{eventsError}</div>
+          ) : Array.isArray(events) && events.length === 0 ? (
+            <div className={eventStyles.noEvents}>Пока нет созданных мероприятий</div>
+          ) : (
+            <div className={eventStyles.list} style={{ marginTop: 10 }}>
               {events.map((event) => (
-                <div key={event.id} className={styles.eventCard}>
-                  <button
-                    className={styles.deleteCircleBtn}
-                    onClick={() => handleDeleteEventById(event.id)}
-                    disabled={isSubmitting}
-                    title="Удалить мероприятие"
-                  >
-                    ×
-                  </button>
-                  <div className={styles.eventTitle}>{getShortText(event.title)}</div>
-                  <div className={styles.eventDate}>{new Date(event.date).toLocaleString("ru-RU")}</div>
-                  <div className={styles.eventLocation}>
-                    <span className={styles.eventLabel}>Место:</span>
-                    <span className={styles.eventValue}> {getShortText(event.location)}</span>
+                <div
+                  key={event.id}
+                  className={`${eventStyles.card} ${event.deletedAt ? eventStyles.deleted : ""}`}
+                >
+                  {event.imageUrl && (
+                    <img
+                      src={event.imageUrl}
+                      alt={event.title}
+                      style={{
+                        width: "100%",
+                        borderRadius: "8px",
+                        marginBottom: "12px",
+                        objectFit: "cover",
+                        maxHeight: "180px"
+                      }}
+                    />
+                  )}
+                  {event.createdBy === user?.id && (
+                    <button
+                      onClick={() => handleDeleteEventById(event.id)}
+                      className={styles.deleteCircleBtn}
+                      title="Удалить мероприятие"
+                    >
+                      ×
+                    </button>
+                  )}
+                  <h3>{event.title}</h3>
+                  <div style={{ color: '#e53935', fontSize: '0.95rem', marginBottom: '0.5rem' }}>
+                    {addresses[event.id]
+                      ? `Адрес: ${addresses[event.id].length > 45 ? addresses[event.id].slice(0, 48) + '…' : addresses[event.id]}`
+                      : event.location ? `Координаты: ${event.location}` : ''}
                   </div>
-                  <div className={styles.eventDescription}>
-                    <span className={styles.eventLabel}>Описание:</span>
-                    <span className={styles.eventValue}> {getShortText(event.description)}</span>
+                  <p className={eventStyles.description}>{event.description}</p>
+                  <div className={eventStyles.date}>
+                    <span className={eventStyles.icon}>📅</span>
+                    {new Date(event.date).toLocaleString("ru-RU", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                    {event.deletedAt && (
+                      <span className={eventStyles.deletedLabel}>
+                        удалено {new Date(event.deletedAt).toLocaleDateString()}
+                      </span>
+                    )}
                   </div>
-                  <button className={styles.editBtn} onClick={() => openEditModal(event)}>Редактировать</button>
+                  {event.createdBy && (
+                    <div className={eventStyles.creator}>
+                      <span className={eventStyles.icon}>👤</span>
+                      Создатель: {event.createdBy}
+                    </div>
+                  )}
+                  {event.createdBy === user?.id && (
+                    <button
+                      onClick={() => openEditModal(event)}
+                      className={eventStyles.editBtn}
+                      style={{ marginTop: '1rem' }}
+                    >
+                      Редактировать
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
-          ) : (
-            <div className={styles.noEvents}>У вас пока нет созданных мероприятий</div>
           )}
         </div>
       </div>
       {modalOpen && (
         <div className={styles.modalOverlay}>
-          <div className={styles.modal}>
-            <h3>Редактировать мероприятие</h3>
-            <input name="title" value={form.title} onChange={handleFormChange} placeholder="Название" />
-            {eventErrors.title && <span className={styles.errorText}>{eventErrors.title}</span>}
-            <input name="date" type="datetime-local" value={form.date} onChange={handleFormChange} />
-            {eventErrors.date && <span className={styles.errorText}>{eventErrors.date}</span>}
-            <input name="location" value={form.location} onChange={handleFormChange} placeholder="Место" />
-            {eventErrors.location && <span className={styles.errorText}>{eventErrors.location}</span>}
-            <input
-              name="description"
-              type="text"
-              value={form.description}
-              onChange={handleFormChange}
-              placeholder="Описание"
-            />
-            {eventErrors.description && <span className={styles.errorText}>{eventErrors.description}</span>}
-            <div className={styles.modalActions}>
-              <button onClick={handleSave}>Сохранить</button>
-              <button onClick={closeModal}>Отмена</button>
-            </div>
+          <div className={styles.modalContent}>
+            <form className={styles.eventForm}>
+              <h2 style={{ color: '#fff', textAlign: 'center', marginBottom: '2rem', fontSize: '2rem', fontWeight: 700 }}>
+                Редактировать мероприятие
+              </h2>
+              <input name="title" value={form.title} onChange={handleFormChange} placeholder="Название" className={styles.inputField} />
+              <input name="date" type="datetime-local" value={form.date} onChange={handleFormChange} className={styles.inputField} />
+              <input name="description" type="text" value={form.description} onChange={handleFormChange} placeholder="Описание" className={styles.inputField} />
+              <input
+                type="text"
+                value={searchValue}
+                onChange={e => setSearchValue(e.target.value)}
+                placeholder="Введите адрес для поиска"
+                className={styles.inputField}
+              />
+              <button type="button" onClick={handleAddressSearch} className={styles.submitBtn} style={{ marginBottom: '1rem', width: '100%' }}>
+                Найти на карте
+              </button>
+              <div style={{ width: '100%', height: '300px', marginBottom: '1rem' }}>
+                <YMaps query={{ apikey: 'd7d5d9a1-c39b-429b-9aa1-19281ca00b45' }}>
+                  <Map
+                    defaultState={{ center: coords ? coords : form.location ? form.location.split(',').map(Number) : [55.751574, 37.573856], zoom: 9 }}
+                    width="100%"
+                    height="300px"
+                    onClick={(e: any) => {
+                      const coords = e.get('coords');
+                      setCoords(coords);
+                      setForm({ ...form, location: coords.join(',') });
+                    }}
+                  >
+                    {(coords || form.location) && <Placemark geometry={coords || form.location.split(',').map(Number)} />}
+                  </Map>
+                </YMaps>
+              </div>
+              <div className={styles.modalActions}>
+                <button type="button" onClick={handleSave} className={styles.submitBtn} disabled={isSubmitting}>Сохранить</button>
+                <button type="button" onClick={closeModal} className={styles.cancelBtn} disabled={isSubmitting}>Отмена</button>
+              </div>
+            </form>
           </div>
         </div>
       )}

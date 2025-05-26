@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { fetchProfile as fetchProfileApi, login as loginApi } from '@api/authService';
+import { fetchProfile as fetchProfileApi, login as loginApi, register as registerApi } from '@api/authService';
 
 interface Event {
   id: string;
@@ -47,8 +47,7 @@ export const fetchProfile = createAsyncThunk(
 export const registerUser = createAsyncThunk(
   'auth/register',
   async (data: { name: string; email: string; password: string }, thunkAPI) => {
-    const response = await axios.post('/auth/register', data);
-    return response.data;
+    return await registerApi(data);
   }
 );
 

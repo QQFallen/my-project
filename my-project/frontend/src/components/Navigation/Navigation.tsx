@@ -38,7 +38,7 @@ const Navigation = () => {
   return (
     <nav className={styles.navigation}>
       <div className={styles.logo}>
-        <Link to={user ? "/all-events" : "/"} onClick={handleLogoClick}>
+        <Link to={user ? "/" : "/"} onClick={handleLogoClick}>
           Доска мероприятий
         </Link>
       </div>

@@ -6,9 +6,9 @@ import styles from "./HomePage.module.scss";
 const HomePage: React.FC = () => {
   const isAuthenticated = !!getToken();
 
-  if (isAuthenticated) {
-    return <Navigate to="/all-events" />;
-  }
+  // if (isAuthenticated) {
+  //   return <Navigate to="" />;
+  // }
 
   return (
     <div className={styles.container}>

@@ -3,7 +3,7 @@ import { Event } from '../types';
 
 export const eventService = {
   getEvents: async () => {
-    const response = await axiosInstance.get('/api/events');
+    const response = await axiosInstance.get('/api/events/user/0');
     return response.data;
   },
 

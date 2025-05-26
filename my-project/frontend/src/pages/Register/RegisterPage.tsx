@@ -109,7 +109,11 @@ export const RegisterPage = () => {
         navigate("/login");
       }
     } catch (err: any) {
-      if (err.response?.status === 409) {
+      if (err.message === "Пользователь с таким email уже зарегистрирован") {
+        setErrors({
+          general: "Пользователь с таким email уже зарегистрирован",
+        });
+      } else if (err.response?.status === 409) {
         setErrors({
           general: "Пользователь с таким email уже зарегистрирован",
         });
@@ -191,8 +195,8 @@ export const RegisterPage = () => {
             disabled={isLoading}
           >
             <option value="">Выберите пол</option>
-            <option value="Мужской">Мужской</option>
-            <option value="Женский">Женский</option>
+            <option value="Автобот">Автобот</option>
+            <option value="Десептикон">Десептикон</option>
           </select>
           {errors.gender && <span className={styles.errorText}>{errors.gender}</span>}
         </div>
@@ -249,15 +253,6 @@ export const RegisterPage = () => {
           />
         </div>
 
-        {errors.general && (
-          <div
-            className={styles.error}
-            style={{ marginBottom: "1rem", textAlign: "center" }}
-          >
-            {errors.general}
-          </div>
-        )}
-
         <button type="submit" disabled={isLoading}>
           {isLoading ? "Регистрация..." : "Зарегистрироваться"}
         </button>
@@ -267,25 +262,11 @@ export const RegisterPage = () => {
         Уже есть аккаунт?<Link to="/login">Войти</Link>
       </p>
 
-      {showToast && (errors.general || errors.email || errors.password || errors.confirmPassword || errors.firstName || errors.lastName || errors.middleName || errors.gender || errors.dateOfBirth || error) && (
-        <div style={{
-          position: 'fixed',
-          top: '32px',
-          right: '32px',
-          zIndex: 9999,
-          background: '#e53935',
-          color: '#fff',
-          padding: '1rem 2rem',
-          borderRadius: '8px',
-          boxShadow: '0 4px 24px rgba(229,57,53,0.25)',
-          fontWeight: 600,
-          fontSize: '1rem',
-          maxWidth: '350px',
-          minWidth: '200px',
-          textAlign: 'center',
-          letterSpacing: '0.01em',
-        }}>
-          {errors.general || errors.email || errors.password || errors.confirmPassword || errors.firstName || errors.lastName || errors.middleName || errors.gender || errors.dateOfBirth || error}
+      {showToast && (
+        <div className={styles.toast} style={{ background: '#e53935', color: '#fff', position: 'fixed', top: 16, right: 16, zIndex: 1000, padding: '1rem 2rem', borderRadius: 10, fontWeight: 600, fontSize: '1.1rem', boxShadow: '0 4px 32px rgba(229,57,53,0.25)' }}>
+          {errors.general === 'Пользователь с таким email уже зарегистрирован'
+            ? 'Пользователь с таким email уже зарегистрирован'
+            : error || errors.general || errors.email || errors.password || errors.name || errors.confirmPassword}
         </div>
       )}
     </div>

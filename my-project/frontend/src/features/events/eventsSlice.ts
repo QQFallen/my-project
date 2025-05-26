@@ -29,11 +29,9 @@ const initialState: EventsState = {
 
 export const fetchEventsThunk = createAsyncThunk(
   'events/fetchEvents',
-  async (showDeleted: boolean = false, thunkAPI) => {
+  async (_, thunkAPI) => {
     try {
-      const response = await axios.get('/api/events', {
-        params: { showDeleted },
-      });
+      const response = await axios.get('/api/events/user/0');
       if (!Array.isArray(response.data)) {
         return thunkAPI.rejectWithValue('API вернул не массив');
       }
