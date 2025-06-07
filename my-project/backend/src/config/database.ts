@@ -22,4 +22,6 @@ export const syncDatabase = async (): Promise<void> => {
         console.error('Ошибка при синхронизации базы данных:', error);
         throw error;
     }
-}; 
+};
+
+export { sequelize }; 

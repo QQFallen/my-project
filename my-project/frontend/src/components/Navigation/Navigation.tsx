@@ -29,8 +29,7 @@ const Navigation = () => {
     }
   };
 
-  const displayNameRaw = user?.firstName || user?.email?.split("@")[0] || "Пользователь";
-  const displayName = displayNameRaw.length > 15 ? displayNameRaw.slice(0, 15) + '…' : displayNameRaw;
+  const displayName = 'Профиль';
 
   const isEventsActive = location.pathname === "/all-events";
   const isProfileActive = location.pathname === "/profile";
@@ -55,7 +54,7 @@ const Navigation = () => {
             <Link
               to="/profile"
               className={isProfileActive ? `${styles.welcome} ${styles.activeLinkGlow}` : `${styles.welcome} ${styles.otherLink}`}
-              style={{ cursor: isProfileActive ? 'default' : 'pointer' }}
+              style={isProfileActive ? { cursor: 'default' } : {}}
               onClick={(e) => isProfileActive && e.preventDefault()}
             >
               {displayName}

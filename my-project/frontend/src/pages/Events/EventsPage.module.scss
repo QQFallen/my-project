@@ -1,5 +1,8 @@
 main {
   background: linear-gradient(90deg, #301e1e 0%, #232324 100%);
+  @media (max-width: 600px) {
+    background: linear-gradient(120deg, #2a1818 0%, #232324 80%, #232324 100%);
+  }
 }
 .container {
   width: 100%;
@@ -9,6 +12,9 @@ main {
   padding: 1rem;
   background: #18181a;
   border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   @media (min-width: 640px) {
     padding: 2rem;
@@ -61,11 +67,12 @@ main {
 .grid {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2.5rem 2rem;
   justify-items: center;
   align-items: stretch;
   width: 100%;
+  max-width: 1000px;
   margin: 0 auto;
 }
 
@@ -78,16 +85,21 @@ main {
   border: 1px solid #333;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
   transition: transform 0.2s, box-shadow 0.2s;
-  width: 480px;
+  width: 100%;
+  max-width: 480px;
   height: auto;
-  min-width: 320px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+  box-sizing: border-box;
 
   @media (min-width: 640px) {
     padding: 1.5rem;
+  }
+
+  @media (max-width: 600px) {
+    padding: 1rem;
   }
 
   &:hover {
@@ -346,13 +358,24 @@ main {
   cursor: pointer;
   transition: background 0.2s, box-shadow 0.2s, color 0.2s, transform 0.1s;
   margin-top: 1rem;
-}
 
-.editBtn:hover:not(:disabled) {
-  background: #43a047;
-  color: #fff;
-  box-shadow: 0 0 15px 5px rgba(67, 160, 71, 0.4);
-  transform: scale(1.25);
+  &:hover:not(:disabled) {
+    background: #43a047;
+    color: #fff;
+    box-shadow: 0 0 15px 5px rgba(67, 160, 71, 0.4);
+    transform: scale(1.25);
+  }
+
+  &[title="Записаться на мероприятие"] {
+    background: #e53935;
+    font-size: 1.5rem;
+    padding: 0.5rem 1rem;
+
+    &:hover:not(:disabled) {
+      background: #e53935;
+      box-shadow: 0 0 15px 5px rgba(229, 57, 53, 0.4);
+    }
+  }
 }
 
 .modalContent {
@@ -376,4 +399,17 @@ main {
   align-items: center;
   justify-content: center;
   z-index: 1000;
+}
+
+.participants {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: #f3f3f3;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+
+  .icon {
+    color: #666;
+  }
 }

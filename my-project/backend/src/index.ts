@@ -7,6 +7,7 @@ import { syncDatabase } from '@config/database';
 import userRoutes from '@routes/userRoutes';
 import eventRoutes from '@routes/events';
 import authRoutes from '@routes/auth';
+import eventParticipantRoutes from '@routes/eventParticipantRoutes';
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import passport from 'passport';
@@ -125,6 +126,7 @@ app.get('/', (_req: Request, res: Response) => {
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/api/events', eventRoutes);
+app.use('/api/participants', eventParticipantRoutes);
 
 // Error handler
 app.use(

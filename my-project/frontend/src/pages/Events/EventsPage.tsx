@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { fetchEventsThunk } from "../../features/events/eventsSlice";
 import { logout } from "@api/authService";
 import { YMaps, Map, Placemark, SearchControl } from '@pbe/react-yandex-maps';
+import { User } from '../../types';
 
 interface Event {
   id: string;
@@ -18,23 +19,6 @@ interface Event {
   imageUrl?: string | null;
   createdBy?: string;
   location?: string;
-}
-
-function useAddressFromCoords(coords: string | undefined) {
-  const [address, setAddress] = useState<string>("");
-
-  useEffect(() => {
-    if (!coords) return;
-    const [lat, lng] = coords.split(',').map(Number);
-    fetch(`https://geocode-maps.yandex.ru/1.x/?apikey=d7d5d9a1-c39b-429b-9aa1-19281ca00b45&format=json&geocode=${lng},${lat}`)
-      .then(res => res.json())
-      .then(data => {
-        const geoObj = data.response.GeoObjectCollection.featureMember[0]?.GeoObject;
-        setAddress(geoObj?.metaDataProperty?.GeocoderMetaData?.text || "");
-      });
-  }, [coords]);
-
-  return address;
 }
 
 const EventsPage = () => {
@@ -54,9 +38,15 @@ const EventsPage = () => {
   const [editForm, setEditForm] = useState({ title: '', description: '', date: '', location: '' });
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [coords, setCoords] = useState<[number, number] | null>(null);
+  const [mapCenter, setMapCenter] = useState<[number, number]>([55.751574, 37.573856]);
   const [searchValue, setSearchValue] = useState('');
   const [editSearchValue, setEditSearchValue] = useState('');
   const [addresses, setAddresses] = useState<{ [id: string]: string }>({});
+  const [participantsCounts, setParticipantsCounts] = useState<{ [id: string]: number }>({});
+  const [participatingEvents, setParticipatingEvents] = useState<{ [id: string]: boolean }>({});
+  const [modalOpen, setModalOpen] = useState(false);
+  const [participantsList, setParticipantsList] = useState<User[]>([]);
+  const [loadingList, setLoadingList] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -78,8 +68,8 @@ const EventsPage = () => {
       if (!Array.isArray(events)) return;
       const newAddresses: { [id: string]: string } = {};
       await Promise.all(events.map(async (event) => {
-        if (event.location) {
-          const [lat, lng] = event.location.split(',').map(Number);
+        if ((event as Event).location) {
+          const [lat, lng] = (event as Event).location!.split(',').map(Number);
           const res = await fetch(`https://geocode-maps.yandex.ru/1.x/?apikey=d7d5d9a1-c39b-429b-9aa1-19281ca00b45&format=json&geocode=${lng},${lat}`);
           const data = await res.json();
           const geoObj = data.response.GeoObjectCollection.featureMember[0]?.GeoObject;
@@ -90,6 +80,19 @@ const EventsPage = () => {
     }
     fetchAddresses();
   }, [events]);
+
+  useEffect(() => {
+    if (Array.isArray(events)) {
+      events.forEach(async (event) => {
+        const count = await eventService.getParticipantsCount(event.id);
+        setParticipantsCounts(prev => ({ ...prev, [event.id]: count }));
+        if (user) {
+          const isPart = await eventService.isParticipating(event.id);
+          setParticipatingEvents(prev => ({ ...prev, [event.id]: isPart }));
+        }
+      });
+    }
+  }, [events, user]);
 
   const handleCreateEventClick = () => {
     if (!isAuthenticated) {
@@ -185,6 +188,7 @@ const EventsPage = () => {
     if (pos) {
       const [lng, lat] = pos.split(' ').map(Number);
       setCoords([lat, lng]);
+      setMapCenter(coords);
     } else {
       alert('Адрес не найден');
     }
@@ -204,6 +208,33 @@ const EventsPage = () => {
       alert('Адрес не найден');
     }
   }
+
+  const handleRegisterForEvent = async (eventId: string) => {
+    try {
+      await eventService.participate(eventId);
+      setParticipantsCounts(prev => ({
+        ...prev,
+        [eventId]: (prev[eventId] || 0) + 1
+      }));
+      setParticipatingEvents(prev => ({
+        ...prev,
+        [eventId]: true
+      }));
+    } catch (error) {
+      alert('Ошибка при записи на мероприятие');
+    }
+  };
+
+  const handleShowParticipants = async (eventId: string) => {
+    setLoadingList(true);
+    setModalOpen(true);
+    try {
+      const users = await eventService.getParticipantsList(eventId);
+      setParticipantsList(users);
+    } finally {
+      setLoadingList(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -290,16 +321,16 @@ const EventsPage = () => {
               <div style={{ width: '100%', height: '300px', marginBottom: '1rem' }}>
                 <YMaps query={{ apikey: 'd7d5d9a1-c39b-429b-9aa1-19281ca00b45' }}>
                   <Map
-                    defaultState={{ center: [55.751574, 37.573856], zoom: 9 }}
+                    state={{ center: mapCenter, zoom: 9 }}
                     width="100%"
                     height="300px"
                     onClick={(e: any) => {
                       const coords = e.get('coords');
                       setCoords(coords);
+                      setMapCenter(coords);
                     }}
                   >
                     {coords && <Placemark geometry={coords} />}
-                    <SearchControl options={{ float: 'right' }} />
                   </Map>
                 </YMaps>
               </div>
@@ -334,15 +365,16 @@ const EventsPage = () => {
       ) : (
         <div className={styles.grid}>
           {Array.isArray(events) && events.map((event) => {
+            const e = event as Event;
             return (
               <div
-                key={event.id}
-                className={`${styles.card} ${event.deletedAt ? styles.deleted : ""}`}
+                key={e.id}
+                className={`${styles.card} ${e.deletedAt ? styles.deleted : ""}`}
               >
-                {event.imageUrl && (
+                {e.imageUrl && (
                   <img
-                    src={event.imageUrl}
-                    alt={event.title}
+                    src={e.imageUrl}
+                    alt={e.title}
                     style={{
                       width: "100%",
                       borderRadius: "8px",
@@ -352,44 +384,62 @@ const EventsPage = () => {
                     }}
                   />
                 )}
-                <h3>{event.title}</h3>                
-                {event.location && (
+                <h3>{e.title}</h3>                
+                {e.location && (
                   <div style={{ color: '#e53935', fontSize: '0.95rem', marginBottom: '0.5rem' }}>
-                    {addresses[event.id]
-                      ? `Адрес: ${addresses[event.id].length > 30 ? addresses[event.id].slice(0, 48) + '…' : addresses[event.id]}`
-                      : `Координаты: ${event.location}`}
+                    {addresses[e.id]
+                      ? `Адрес: ${addresses[e.id].length > 30 ? addresses[e.id].slice(0, 48) + '…' : addresses[e.id]}`
+                      : `Координаты: ${e.location}`}
                   </div>
                 )}
-                <p className={styles.description}>{event.description}</p>
+                <p className={styles.description}>{e.description}</p>
                 <div className={styles.date}>
                   <span className={styles.icon}>📅</span>
-                  {new Date(event.date).toLocaleDateString("ru-RU", {
+                  {new Date(e.date).toLocaleDateString("ru-RU", {
                     day: "numeric",
                     month: "long",
                     year: "numeric"
                   })}
-                  {event.deletedAt && (
+                  {e.deletedAt && (
                     <span className={styles.deletedLabel}>
-                      удалено {new Date(event.deletedAt).toLocaleDateString()}
+                      удалено {new Date(e.deletedAt).toLocaleDateString()}
                     </span>
                   )}
                 </div>
-                {event.createdBy === user?.id && (
+                <div
+                  className={styles.participants}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => handleShowParticipants(e.id)}
+                >
+                  <span className={styles.icon}>👥</span>
+                  {participantsCounts[e.id] || 0} участников
+                </div>
+                {e.createdBy === user?.id && (
                   <button
-                    onClick={() => handleDeleteEventById(event.id)}
+                    onClick={() => handleDeleteEventById(e.id)}
                     className={styles.deleteCircleBtn}
                     title="Удалить мероприятие"
                   >
                     ×
                   </button>
                 )}
-                {event.createdBy === user?.id && (
+                {e.createdBy === user?.id && (
                   <button
-                    onClick={() => openEditModal(event)}
+                    onClick={() => openEditModal(e)}
                     className={styles.editBtn}
                     style={{ marginTop: '1rem' }}
                   >
                     Редактировать
+                  </button>
+                )}
+                {isAuthenticated && e.createdBy !== user?.id && !participatingEvents[e.id] && (
+                  <button
+                    onClick={() => handleRegisterForEvent(e.id)}
+                    className={styles.editBtn}
+                    style={{ marginTop: '1rem', background: '#e53935' }}
+                    title="Записаться на мероприятие"
+                  >
+                    ✋
                   </button>
                 )}
               </div>
@@ -441,8 +491,108 @@ const EventsPage = () => {
           </div>
         </div>
       )}
+
+      {modalOpen && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          background: 'rgba(0,0,0,0.6)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: '#232324',
+            borderRadius: '16px',
+            padding: '2.5rem 2rem 2rem 2rem',
+            minWidth: 400,
+            maxWidth: 500,
+            minHeight: 200,
+            boxShadow: '0 4px 24px rgba(229,57,53,0.10)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            color: '#fff',
+          }}>
+            <h2 style={{ color: '#fff', textAlign: 'center', marginBottom: '2rem', fontSize: '2rem', fontWeight: 700 }}>Участники</h2>
+            {loadingList ? (
+              <div style={{ color: '#fff', textAlign: 'center' }}>Загрузка...</div>
+            ) : (
+              <ul style={{ color: '#f3f3f3', fontSize: '1.1rem', marginBottom: '2rem', listStyle: 'none', padding: 0, textAlign: 'left', width: '100%' }}>
+                {participantsList.length === 0 && <li style={{ textAlign: 'center', color: '#f3f3f3' }}>Нет участников</li>}
+                {participantsList.map(user => (
+                  <li key={user.id} style={{ marginBottom: 8, display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{
+                      display: 'inline-block',
+                      width: 10,
+                      height: 10,
+                      borderRadius: '50%',
+                      background: '#000',
+                      marginRight: 12,
+                      flexShrink: 0
+                    }}></span>
+                    {user.firstName} {user.lastName}
+                  </li>
+                ))}
+              </ul>
+            )}
+            <button
+              onClick={() => setModalOpen(false)}
+              style={{
+                background: '#e53935',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 8,
+                padding: '0.7rem 2.2rem',
+                fontSize: '1.1rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                marginTop: 8,
+                transition: 'background 0.2s',
+              }}
+            >
+              Закрыть
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Большая карта со всеми мероприятиями */}
+      <h3 style={{ textAlign: 'left', margin: '2rem 0 0.5rem 0', fontSize: '2rem', fontWeight: 700, color: '#e53935' }}>Карта событий</h3>
+      <div style={{ width: '100%', height: '450px', margin: '2rem 0' }}>
+        <YMaps query={{ apikey: 'd7d5d9a1-c39b-429b-9aa1-19281ca00b45' }}>
+          <Map
+            defaultState={{ center: [55.751574, 37.573856], zoom: 9 }}
+            width="100%"
+            height="450px"
+          >
+            {Array.isArray(events) && (events as Event[])
+              .filter((event) => event.location)
+              .map((event) => {
+                const coords = (event.location as string).split(',').map(Number);
+                return (
+                  <Placemark
+                    key={event.id}
+                    geometry={coords}
+                    properties={{
+                      balloonContentHeader: event.title,
+                      balloonContentBody: event.description,
+                      balloonContentFooter: addresses[event.id] ? `Адрес: ${addresses[event.id]}` : undefined,
+                    }}
+                    options={{ preset: 'islands#redDotIcon' }}
+                  />
+                );
+              })}
+          </Map>
+        </YMaps>
+      </div>
     </div>
   );
 };
 
 export default EventsPage;
+

@@ -63,22 +63,9 @@ console.log('=== events router loaded ===');
  */
 router.get('/', async (req: Request, res: Response) => {
   try {
-    const showDeleted = req.query.showDeleted === 'true';
-    let events;
-
-    if (showDeleted) {
-      // Если showDeleted=true, возвращаем все мероприятия
-      events = await Event.findAll({
-        order: [['createdAt', 'DESC']],
-        paranoid: false // Отключаем paranoid режим для получения удаленных записей
-      });
-    } else {
-      // Если showDeleted=false, возвращаем только неудаленные
-      events = await Event.findAll({
-        order: [['createdAt', 'DESC']]
-      });
-    }
-    
+    let events = await Event.findAll({
+      order: [['createdAt', 'DESC']]
+    });
     res.status(200).json(events);
   } catch (error) {
     const err =
@@ -317,7 +304,6 @@ router.delete('/:id', async (req: Request, res: Response) => {
  *         description: Ошибка при получении списка мероприятий
  */
 router.get('/user/:userId', async (req: Request, res: Response) => {
-  console.log('--- /user/:userId endpoint called ---');
   try {
     const { userId } = req.params;
     const userIdNum = parseInt(userId, 10);
@@ -326,21 +312,23 @@ router.get('/user/:userId', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Некорректный ID пользователя' });
     }
 
-    // Запрос к базе без участников
-    const events = await Event.findAll({
-      where: { createdBy: userIdNum },
-      order: [['createdAt', 'DESC']]
-    });
-
-    // Логируем результат
-    console.log('Events found:', Array.isArray(events) ? events.length : events);
-
-    // Возвращаем результат
+    let events;
+    if (userIdNum === 0) {
+      // Все события
+      events = await Event.findAll({
+        order: [['createdAt', 'DESC']]
+      });
+    } else {
+      // События пользователя
+      events = await Event.findAll({
+        where: { createdBy: userIdNum },
+        order: [['createdAt', 'DESC']]
+      });
+    }
     res.status(200).json(events);
   } catch (error) {
-    console.error('Ошибка в /user/:userId:', error);
     res.status(500).json({
-      error: 'Ошибка при получении мероприятий пользователя',
+      error: 'Ошибка при получении мероприятий',
       details: error instanceof Error ? error.message : error,
     });
   }

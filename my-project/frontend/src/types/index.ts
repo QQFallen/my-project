@@ -15,4 +15,5 @@ export interface Event {
   date: string;
   location: string;
   createdBy: string;
+  participantsCount?: number;
 } 

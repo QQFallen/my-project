@@ -269,7 +269,7 @@ const ProfilePage = () => {
           <button className={styles.editBtn} onClick={openProfileModal}>Редактировать профиль</button>
         </div>
         <div className={eventStyles.container}>
-          <h2 style={{ textAlign: 'center' }}>Мои мероприятия</h2>
+          <h2 className={eventStyles.header} style={{ color: '#e53935', textAlign: 'center' }}>Мои мероприятия</h2>
           {eventsLoading ? (
             <div className={eventStyles.loading}>Загрузка мероприятий...</div>
           ) : eventsError ? (
@@ -327,12 +327,6 @@ const ProfilePage = () => {
                       </span>
                     )}
                   </div>
-                  {event.createdBy && (
-                    <div className={eventStyles.creator}>
-                      <span className={eventStyles.icon}>👤</span>
-                      Создатель: {event.createdBy}
-                    </div>
-                  )}
                   {event.createdBy === user?.id && (
                     <button
                       onClick={() => openEditModal(event)}

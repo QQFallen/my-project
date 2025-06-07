@@ -10,7 +10,7 @@ body, html {
   flex-direction: column;
   gap: 1.5rem;
   padding: 2rem;
-  background-color: #232324;
+  background-color: #1a1a1c;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1), 0 0 24px 4px rgba(229, 57, 53, 0.25);
 
@@ -50,6 +50,17 @@ input {
   transition: all 0.3s ease;
   background-color: #18181a;
   color: #fff;
+  clip-path: polygon(
+    12px 0%,
+    calc(100% - 12px) 0%,
+    100% 12px,
+    100% calc(100% - 12px),
+    calc(100% - 12px) 100%,
+    12px 100%,
+    0% calc(100% - 12px),
+    0% 12px
+  );
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10) inset;
 
   &:focus {
     outline: none;
