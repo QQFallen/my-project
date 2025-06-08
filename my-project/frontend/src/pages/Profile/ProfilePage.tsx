@@ -14,12 +14,11 @@ import { YMaps, Map, Placemark } from '@pbe/react-yandex-maps';
 interface Event {
   id: string;
   title: string;
-  description: string;
   date: string;
-  location: string;
-  createdBy?: string;
-  deletedAt?: string | null;
+  description: string;
   imageUrl?: string | null;
+  createdBy?: string;
+  location?: string;
 }
 
 const ProfilePage = () => {
@@ -99,7 +98,7 @@ const ProfilePage = () => {
       title: event.title,
       description: event.description,
       date: event.date.slice(0, 16),
-      location: event.location
+      location: event.location || ''
     });
     setModalOpen(true);
   };
@@ -281,7 +280,7 @@ const ProfilePage = () => {
               {events.map((event) => (
                 <div
                   key={event.id}
-                  className={`${eventStyles.card} ${event.deletedAt ? eventStyles.deleted : ""}`}
+                  className={eventStyles.card}
                 >
                   {event.imageUrl && (
                     <img
@@ -314,18 +313,11 @@ const ProfilePage = () => {
                   <p className={eventStyles.description}>{event.description}</p>
                   <div className={eventStyles.date}>
                     <span className={eventStyles.icon}>📅</span>
-                    {new Date(event.date).toLocaleString("ru-RU", {
+                    {new Date(event.date).toLocaleDateString("ru-RU", {
                       day: "numeric",
                       month: "long",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
+                      year: "numeric"
                     })}
-                    {event.deletedAt && (
-                      <span className={eventStyles.deletedLabel}>
-                        удалено {new Date(event.deletedAt).toLocaleDateString()}
-                      </span>
-                    )}
                   </div>
                   {event.createdBy === user?.id && (
                     <button

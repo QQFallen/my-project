@@ -15,7 +15,6 @@ interface Event {
   title: string;
   date: string;
   description: string;
-  deletedAt?: string | null;
   imageUrl?: string | null;
   createdBy?: string;
   location?: string;
@@ -26,13 +25,11 @@ const EventsPage = () => {
   const dispatch = useAppDispatch();
   const { events, isLoading, error, isDataInvalid } = useAppSelector((state) => state.events);
   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
-  const [showDeleted, setShowDeleted] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showBurgerMenu, setShowBurgerMenu] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
-  const [location, setLocation] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editEvent, setEditEvent] = useState<Event | null>(null);
   const [editForm, setEditForm] = useState({ title: '', description: '', date: '', location: '' });
@@ -121,7 +118,6 @@ const EventsPage = () => {
       setTitle("");
       setDate("");
       setDescription("");
-      setLocation("");
       dispatch(fetchEventsThunk());
     } catch (err) {
       alert("Ошибка при создании мероприятия");
@@ -187,8 +183,9 @@ const EventsPage = () => {
     const pos = data.response.GeoObjectCollection.featureMember[0]?.GeoObject?.Point?.pos;
     if (pos) {
       const [lng, lat] = pos.split(' ').map(Number);
-      setCoords([lat, lng]);
-      setMapCenter(coords);
+      const newCoords: [number, number] = [lat, lng];
+      setCoords(newCoords);
+      setMapCenter(newCoords);
     } else {
       alert('Адрес не найден');
     }
@@ -369,7 +366,7 @@ const EventsPage = () => {
             return (
               <div
                 key={e.id}
-                className={`${styles.card} ${e.deletedAt ? styles.deleted : ""}`}
+                className={styles.card}
               >
                 {e.imageUrl && (
                   <img
@@ -400,11 +397,6 @@ const EventsPage = () => {
                     month: "long",
                     year: "numeric"
                   })}
-                  {e.deletedAt && (
-                    <span className={styles.deletedLabel}>
-                      удалено {new Date(e.deletedAt).toLocaleDateString()}
-                    </span>
-                  )}
                 </div>
                 <div
                   className={styles.participants}

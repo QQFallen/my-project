@@ -38,28 +38,25 @@ console.log('=== events router loaded ===');
 
 /**
  * @swagger
- * /events:
+ * /api/events:
  *   get:
- *     summary: Получить список всех мероприятий
- *     description: Возвращает список всех мероприятий, с возможностью включить удалённые.
+ *     summary: Получает список мероприятий
  *     parameters:
- *       - name: showDeleted
- *         in: query
- *         required: false
- *         description: Показывать ли удалённые мероприятия
+ *       - in: query
+ *         name: page
  *         schema:
- *           type: boolean
+ *           type: integer
+ *         description: Номер страницы
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Количество мероприятий на странице
  *     responses:
  *       200:
  *         description: Список мероприятий
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Event'
  *       500:
- *         description: Ошибка при получении списка мероприятий
+ *         description: Ошибка сервера
  */
 router.get('/', async (req: Request, res: Response) => {
   try {
@@ -240,45 +237,32 @@ router.put('/:id', async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /events/{id}:
+ * /api/events/{id}:
  *   delete:
- *     summary: Мягкое удаление мероприятия
- *     description: Помечает мероприятие как удалённое, устанавливая поле deletedAt.
+ *     summary: Удаляет мероприятие
  *     parameters:
- *       - name: id
- *         in: path
+ *       - in: path
+ *         name: id
  *         required: true
- *         description: ID мероприятия
  *         schema:
  *           type: string
- *           format: uuid
+ *         description: ID мероприятия
  *     responses:
  *       200:
- *         description: Мероприятие помечено как удалённое
+ *         description: Мероприятие успешно удалено
  *       404:
  *         description: Мероприятие не найдено
  *       500:
- *         description: Ошибка при удалении мероприятия
+ *         description: Ошибка сервера
  */
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const event = await Event.findOne({ where: { id } });
-
-    if (!event) {
-      return res.status(404).json({ error: 'Мероприятие не найдено' });
-    }
-
-    await event.destroy();
-    
-    res.status(200).json({ message: 'Мероприятие помечено как удалённое' });
+    await Event.destroy({ where: { id } });
+    res.status(200).json({ message: 'Мероприятие успешно удалено' });
   } catch (error) {
-    const err =
-      error instanceof Error ? error : new Error('Неизвестная ошибка');
-    res.status(500).json({
-      error: 'Ошибка при удалении мероприятия',
-      details: err.message,
-    });
+    console.error('Ошибка при удалении мероприятия:', error);
+    res.status(500).json({ error: 'Ошибка при удалении мероприятия' });
   }
 });
 

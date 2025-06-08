@@ -4,11 +4,11 @@ import axios from 'axios';
 export interface Event {
   id: string;
   title: string;
-  description: string;
   date: string;
-  deletedAt?: string | null;
+  description: string;
   imageUrl?: string | null;
   createdBy?: string;
+  location?: string;
 }
 
 interface EventsState {
